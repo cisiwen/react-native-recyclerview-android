@@ -15,11 +15,14 @@ public class RecyclerviewAndroidViewPackage implements ReactPackage {
   public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
     List<ViewManager> viewManagers = new ArrayList<>();
     viewManagers.add(new RecyclerviewAndroidViewManager());
+    viewManagers.add(new RecyclerviewAndroidViewItemViewManager());
     return viewManagers;
   }
 
   @Override
   public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
-    return Collections.emptyList();
+    List<NativeModule> nativeModules = new ArrayList<>();
+    nativeModules.add(new RecyclerviewAndroidViewModule(reactContext));
+    return nativeModules;
   }
 }
