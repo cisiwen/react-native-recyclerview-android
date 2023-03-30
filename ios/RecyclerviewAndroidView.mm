@@ -8,7 +8,6 @@
 
 #import "RCTFabricComponentsPlugins.h"
 #import "Utils.h"
-
 using namespace facebook::react;
 
 @interface RecyclerviewAndroidView () <RCTRecyclerviewAndroidViewViewProtocol>
@@ -16,7 +15,7 @@ using namespace facebook::react;
 @end
 
 @implementation RecyclerviewAndroidView {
-    UIView * _view;
+    UICollectionView * _view;
 }
 
 + (ComponentDescriptorProvider)componentDescriptorProvider
@@ -30,8 +29,13 @@ using namespace facebook::react;
     static const auto defaultProps = std::make_shared<const RecyclerviewAndroidViewProps>();
     _props = defaultProps;
 
-    _view = [[UIView alloc] init];
-
+  UICollectionViewFlowLayout* flowLayout = [[UICollectionViewFlowLayout alloc] init];
+  flowLayout.itemSize = CGSizeMake(100, 100);
+  [flowLayout setScrollDirection:UICollectionViewScrollDirectionHorizontal];
+  _view = [[UICollectionView alloc] initWithFrame:frame collectionViewLayout:flowLayout];
+  [_view registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"cell"];
+  
+    
     self.contentView = _view;
   }
 
@@ -46,6 +50,10 @@ using namespace facebook::react;
     if (oldViewProps.color != newViewProps.color) {
         NSString * colorToConvert = [[NSString alloc] initWithUTF8String: newViewProps.color.c_str()];
         [_view setBackgroundColor: [Utils hexStringToColor:colorToConvert]];
+    }
+    if(oldViewProps.dataSourceString!=newViewProps.dataSourceString){
+        NSLog(@"Your name is %lu", newViewProps.dataSourceString.length());
+         
     }
 
     [super updateProps:props oldProps:oldProps];

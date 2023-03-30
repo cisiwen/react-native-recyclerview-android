@@ -10,12 +10,17 @@
 
 RCT_EXPORT_MODULE(RecyclerviewAndroidView)
 
-- (UIView *)view
+- (UICollectionView *)view
 {
-  return [[UIView alloc] init];
+  return [[UICollectionView alloc] init];
 }
 
-RCT_CUSTOM_VIEW_PROPERTY(color, NSString, UIView)
+RCT_CUSTOM_VIEW_PROPERTY(color, NSString, UICollectionView)
+{
+  [view setBackgroundColor: [Utils hexStringToColor:json]];
+}
+
+RCT_CUSTOM_VIEW_PROPERTY(dataSourceString, NSString, UICollectionView)
 {
   [view setBackgroundColor: [Utils hexStringToColor:json]];
 }
