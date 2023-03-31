@@ -28,7 +28,6 @@ using namespace facebook::react;
   if (self = [super initWithFrame:frame]) {
     static const auto defaultProps = std::make_shared<const RecyclerviewAndroidViewProps>();
     _props = defaultProps;
-
   UICollectionViewFlowLayout* flowLayout = [[UICollectionViewFlowLayout alloc] init];
   flowLayout.itemSize = CGSizeMake(100, 100);
   [flowLayout setScrollDirection:UICollectionViewScrollDirectionHorizontal];

@@ -6,6 +6,11 @@
 //
 
 import Foundation
-class RNCollectioView: NSObject {
+@objc(RNCollectioView)
+public class RNCollectioView: NSObject {
+    
+   @objc public func getName()->String {
+        return "Hello from swift";
+    }
     
 }
