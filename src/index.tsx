@@ -1,2 +1,2 @@
-export { default as RecyclerviewAndroidView } from './RecyclerviewAndroidViewNativeComponent';
-export * from './RecyclerviewAndroidViewNativeComponent';
+export { default as RecyclerviewAndroidView } from "./RecyclerviewAndroidViewNativeComponent";
+export * from "./RecyclerviewAndroidViewNativeComponent";
