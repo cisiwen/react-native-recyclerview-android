@@ -27,6 +27,7 @@ public class RNCollectioView:NSObject {
         return collectionView;
     }
     
+    
     @objc public func setDataSourceString(dataSource: String)->Void{
         NSLog("Your name is %@TESTING%lu", self.getName(), Int(Date().timeIntervalSince1970*1000));
         let jsonDecoder = JSONDecoder();
@@ -38,5 +39,7 @@ public class RNCollectioView:NSObject {
             print(error.localizedDescription);
         }
     }
+    
+   
     
 }

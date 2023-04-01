@@ -18,8 +18,8 @@ using namespace facebook::react;
     UICollectionView * _view;
 }
 
-RNCollectioView *cView;
-
+ 
+RNCollectionViewController *collectionViewController;
 + (ComponentDescriptorProvider)componentDescriptorProvider
 {
     return concreteComponentDescriptorProvider<RecyclerviewAndroidViewComponentDescriptor>();
@@ -31,9 +31,11 @@ RNCollectioView *cView;
         static const auto defaultProps = std::make_shared<const RecyclerviewAndroidViewProps>();
         _props = defaultProps;
         
-        cView=[[RNCollectioView alloc] init];
-        _view = [cView initializeUICollectionViewWithFrame:frame];
-        self.contentView =_view;
+        collectionViewController=[[RNCollectionViewController alloc] initWithFrame:frame];
+        
+        _view= collectionViewController.collectionView;
+        //_view = cView; //[cView initializeUICollectionViewWithFrame:frame];
+        self.contentView = _view;
     }
 
   return self;
@@ -50,7 +52,7 @@ RNCollectioView *cView;
     }
     if(oldViewProps.dataSourceString!=newViewProps.dataSourceString){
         NSString * dataSourceString = [[NSString alloc] initWithUTF8String: newViewProps.dataSourceString.c_str()];
-        [cView setDataSourceStringWithDataSource: dataSourceString];
+        [collectionViewController setDataSourceStringWithDataSource: dataSourceString];
     }
 
     [super updateProps:props oldProps:oldProps];

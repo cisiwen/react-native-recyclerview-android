@@ -4,28 +4,28 @@ import { StyleSheet, View } from 'react-native';
 import { Asset, RecyclerviewAndroidView } from 'react-native-recyclerview-android';
 
 export default function App() {
-  const dataSource:Asset[]=[];
+  const dataSource: Asset[] = [];
   let now = new Date().getTime().toString();
-  for(let i=0;i<300000;i++){
+  for (let i = 0; i < 10; i++) {
     dataSource.push({
-      contentId:`${i}`,
-      uri:"https://picsum.photos/200/300",
-      contentUri:"https://picsum.photos/200/300",
-      width:now,
-      mediaType:"image/jpeg",
-      height:now
+      contentId: `${i}`,
+      uri: "https://picsum.photos/200/300",
+      contentUri: "https://picsum.photos/200/300",
+      width: now,
+      mediaType: "image/jpeg",
+      height: now
     });
   }
-  console.log(now,new Date().getTime().toString());
+  console.log(now, new Date().getTime().toString());
   now = new Date().getTime().toString();
   const dataSourceString = JSON.stringify(dataSource);;
-  console.log("json.stringfy",now,new Date().getTime().toString());
+  console.log("json.stringfy", now, new Date().getTime().toString());
   return (
     <View style={styles.container}>
       <RecyclerviewAndroidView dataSourceString={dataSourceString} color="#32a852" style={styles.box} />
     </View>
   );
-  }
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -35,9 +35,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   box: {
-    width:"100%",
-    height:"100%",
-    backgroundColor:"green",
-    margin:0
+    width: "100%",
+    height: "100%",
+    backgroundColor: "green",
+    margin: 0
   },
 });
