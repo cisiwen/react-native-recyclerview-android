@@ -5,7 +5,7 @@
 #import <react/renderer/components/RNRecyclerviewAndroidViewSpec/EventEmitters.h>
 #import <react/renderer/components/RNRecyclerviewAndroidViewSpec/Props.h>
 #import <react/renderer/components/RNRecyclerviewAndroidViewSpec/RCTComponentViewHelpers.h>
-
+#import "react_native_recyclerview_android-Swift.h"
 #import "RCTFabricComponentsPlugins.h"
 #import "Utils.h"
 using namespace facebook::react;
@@ -18,6 +18,8 @@ using namespace facebook::react;
     UICollectionView * _view;
 }
 
+RNCollectioView *cView;
+
 + (ComponentDescriptorProvider)componentDescriptorProvider
 {
     return concreteComponentDescriptorProvider<RecyclerviewAndroidViewComponentDescriptor>();
@@ -25,18 +27,14 @@ using namespace facebook::react;
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
-  if (self = [super initWithFrame:frame]) {
-    static const auto defaultProps = std::make_shared<const RecyclerviewAndroidViewProps>();
-    _props = defaultProps;
-  UICollectionViewFlowLayout* flowLayout = [[UICollectionViewFlowLayout alloc] init];
-  flowLayout.itemSize = CGSizeMake(100, 100);
-  [flowLayout setScrollDirection:UICollectionViewScrollDirectionHorizontal];
-  _view = [[UICollectionView alloc] initWithFrame:frame collectionViewLayout:flowLayout];
-  [_view registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"cell"];
-  
-    
-    self.contentView = _view;
-  }
+    if (self = [super initWithFrame:frame]) {
+        static const auto defaultProps = std::make_shared<const RecyclerviewAndroidViewProps>();
+        _props = defaultProps;
+        
+        cView=[[RNCollectioView alloc] init];
+        _view = [cView initializeUICollectionViewWithFrame:frame];
+        self.contentView =_view;
+    }
 
   return self;
 }
@@ -51,8 +49,8 @@ using namespace facebook::react;
         [_view setBackgroundColor: [Utils hexStringToColor:colorToConvert]];
     }
     if(oldViewProps.dataSourceString!=newViewProps.dataSourceString){
-        NSLog(@"Your name is %lu", newViewProps.dataSourceString.length());
-         
+        NSString * dataSourceString = [[NSString alloc] initWithUTF8String: newViewProps.dataSourceString.c_str()];
+        [cView setDataSourceStringWithDataSource: dataSourceString];
     }
 
     [super updateProps:props oldProps:oldProps];
