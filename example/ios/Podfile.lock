@@ -664,6 +664,8 @@ PODS:
     - React-Core
     - React-RCTFabric
     - ReactCommon/turbomodule/core
+    - SDWebImage
+    - SDWebImagePhotosPlugin
   - React-perflogger (0.71.4)
   - React-RCTActionSheet (0.71.4):
     - React-Core/RCTActionSheetHeaders (= 0.71.4)
@@ -756,6 +758,11 @@ PODS:
     - React-jsi (= 0.71.4)
     - React-logger (= 0.71.4)
     - React-perflogger (= 0.71.4)
+  - SDWebImage (5.15.5):
+    - SDWebImage/Core (= 5.15.5)
+  - SDWebImage/Core (5.15.5)
+  - SDWebImagePhotosPlugin (1.2.0):
+    - SDWebImage/Core (~> 5.10)
   - SocketRocket (0.6.0)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -826,6 +833,8 @@ DEPENDENCIES:
   - React-rncore (from `../node_modules/react-native/ReactCommon`)
   - React-runtimeexecutor (from `../node_modules/react-native/ReactCommon/runtimeexecutor`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - SDWebImage
+  - SDWebImagePhotosPlugin
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -843,6 +852,8 @@ SPEC REPOS:
     - fmt
     - libevent
     - OpenSSL-Universal
+    - SDWebImage
+    - SDWebImagePhotosPlugin
     - SocketRocket
     - YogaKit
 
@@ -962,7 +973,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: d6b7fa9260aa3cb40afee0507e3bc1d17ecaa6f2
   React-jsinspector: 1f51e775819199d3fe9410e69ee8d4c4161c7b06
   React-logger: 0d58569ec51d30d1792c5e86a8e3b78d24b582c6
-  react-native-recyclerview-android: 603ab7a925a28efd037e71f350ce1ff21b64e3b7
+  react-native-recyclerview-android: 7e55b8f8f248c85155a9f1026561fa0e6232a48b
   React-perflogger: 0bb0522a12e058f6eb69d888bc16f40c16c4b907
   React-RCTActionSheet: bfd675a10f06a18728ea15d82082d48f228a213a
   React-RCTAnimation: 2fa220b2052ec75b733112aca39143d34546a941
@@ -978,10 +989,12 @@ SPEC CHECKSUMS:
   React-rncore: 494f091f1b97538bbdd62edf1a793e41558671a5
   React-runtimeexecutor: 8fa50b38df6b992c76537993a2b0553d3b088004
   ReactCommon: b49a4b00ca6d181ff74b17c12b2d59ac4add0bde
+  SDWebImage: fd7e1a22f00303e058058278639bf6196ee431fe
+  SDWebImagePhotosPlugin: 7d52495711a00637da16bbd7098a634f524c8d7e
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   Yoga: 79dd7410de6f8ad73a77c868d3d368843f0c93e0
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 41e973bbbdecf8bc1b50562ff1ffd2f13aede8e0
+PODFILE CHECKSUM: 0c07468b6116b62fac21b2af75d8179841d9f270
 
 COCOAPODS: 1.12.0

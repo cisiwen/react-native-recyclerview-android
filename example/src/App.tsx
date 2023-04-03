@@ -9,11 +9,11 @@ import {
 export default function App() {
   const dataSource: Asset[] = [];
   let now = new Date().getTime().toString();
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 10000; i++) {
     dataSource.push({
       contentId: `${i}`,
-      uri: 'https://picsum.photos/200/300',
-      contentUri: 'https://picsum.photos/200/300',
+      uri: 'https://live.staticflickr.com/3469/3700376791_c5833828b3_b.jpg',
+      contentUri: 'https://live.staticflickr.com/3469/3700376791_c5833828b3_b.jpg',
       width: now,
       mediaType: 'image/jpeg',
       height: now,

@@ -7,7 +7,7 @@
 
 import Foundation
 @objc(RNCollectionViewController)
-public class RNCollectionViewController:UICollectionViewController {
+public class RNCollectionViewController:UICollectionViewController,UICollectionViewDelegateFlowLayout {
     
     private var data:[MediaItem];
     @objc public init(frame:CGRect) {
@@ -54,6 +54,8 @@ public class RNCollectionViewController:UICollectionViewController {
         //let url = URL(string: media.uri);
         //let data = try? Data(contentsOf: url!)
         //cell.imageView.image = UIImage(data: data!);
+        cell.contentMode=UIView.ContentMode.scaleAspectFill;
+        cell.setMediaItem(mediaItem: media);
         cell.backgroundColor=UIColor.red;
         return cell
     }
@@ -61,4 +63,15 @@ public class RNCollectionViewController:UICollectionViewController {
     public override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         //performSegue(withIdentifier: "showDetail", sender: nil)
     }
+    
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+            let collectionWidth = collectionView.bounds.width
+            return CGSize(width: collectionWidth / 4, height: collectionWidth / 4)
+        }
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+            return 0
+        }
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+            return 0
+        }
 }
