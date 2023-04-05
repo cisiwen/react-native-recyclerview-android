@@ -9,7 +9,7 @@ import {
 export default function App() {
   const dataSource: Asset[] = [];
   let now = new Date().getTime().toString();
-  for (let i = 0; i < 10000; i++) {
+  for (let i = 0; i < 100000; i++) {
     dataSource.push({
       contentId: `${i}`,
       uri: 'https://live.staticflickr.com/3469/3700376791_c5833828b3_b.jpg',

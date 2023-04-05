@@ -13,9 +13,10 @@ public class RNCollectionViewController:UICollectionViewController,UICollectionV
     @objc public init(frame:CGRect) {
         let layout = UICollectionViewFlowLayout();
         layout.scrollDirection = .vertical;
+        layout.estimatedItemSize = .zero;
         data=Array();
         super.init(collectionViewLayout: layout);
-        collectionView.register(MediaItemCellView.self, forCellWithReuseIdentifier: "dataCell")
+        collectionView.register(MediaItemCellView.self, forCellWithReuseIdentifier: "dataCell");
     }
     
     required init?(coder: NSCoder) {
@@ -65,13 +66,13 @@ public class RNCollectionViewController:UICollectionViewController,UICollectionV
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-            let collectionWidth = collectionView.bounds.width
-            return CGSize(width: collectionWidth / 4, height: collectionWidth / 4)
-        }
+        let collectionWidth = collectionView.bounds.width
+        return CGSize(width: collectionWidth / 4 - 1, height: collectionWidth / 4-1)
+    }
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-            return 0
-        }
+        return 1
+    }
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-            return 0
-        }
+        return 1
+    }
 }
