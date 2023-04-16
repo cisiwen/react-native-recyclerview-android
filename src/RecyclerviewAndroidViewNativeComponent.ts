@@ -8,9 +8,15 @@ export type Asset = {
   width: string;
   height: string;
   contentUri: string;
+  title:string;
   mediaType: string;
 };
 
+export type SectionDataSource={
+  sectionId: string;
+  sectionTitle: string;
+  data:Array<Asset>;
+}
 interface NativeProps extends ViewProps {
   color?: string;
   dataSourceString?: string;

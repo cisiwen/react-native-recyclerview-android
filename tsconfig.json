@@ -5,6 +5,7 @@
       "react-native-recyclerview-android": ["./src/index"]
     },
     "allowUnreachableCode": false,
+    "strictNullChecks": false,
     "allowUnusedLabels": false,
     "esModuleInterop": true,
     "importsNotUsedAsValues": "error",

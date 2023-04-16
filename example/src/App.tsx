@@ -2,26 +2,36 @@ import * as React from 'react';
 
 import { StyleSheet, View } from 'react-native';
 import {
-  Asset,
   RecyclerviewAndroidView,
+  SectionDataSource,
 } from 'react-native-recyclerview-android';
 
 export default function App() {
-  const dataSource: Asset[] = [];
   let now = new Date().getTime().toString();
-  for (let i = 0; i < 100000; i++) {
-    dataSource.push({
-      contentId: `${i}`,
-      uri: 'https://live.staticflickr.com/3469/3700376791_c5833828b3_b.jpg',
-      contentUri: 'https://live.staticflickr.com/3469/3700376791_c5833828b3_b.jpg',
-      width: now,
-      mediaType: 'image/jpeg',
-      height: now,
-    });
+  let sections: SectionDataSource[] = [];
+  for (let s = 0; s < 50; s++) {
+    let section: SectionDataSource = {
+      sectionTitle: `Gallery section ${s}`,
+      sectionId: s.toString(),
+      data: [],
+    };
+    for (let i = 0; i < 120; i++) {
+      section.data.push({
+        contentId: `${i}`,
+        uri: 'https://live.staticflickr.com/3469/3700376791_c5833828b3_b.jpg',
+        contentUri: null, //'https://live.staticflickr.com/3469/3700376791_c5833828b3_b.jpg',
+        width: now,
+        title: null,
+        mediaType: 'image/jpeg',
+        height: now,
+      }); 
+    }
+    sections.push(section);
   }
+
   console.log(now, new Date().getTime().toString());
   now = new Date().getTime().toString();
-  const dataSourceString = JSON.stringify(dataSource);
+  const dataSourceString = JSON.stringify(sections);
   console.log('json.stringfy', now, new Date().getTime().toString());
   return (
     <View style={styles.container}>
