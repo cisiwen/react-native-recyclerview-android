@@ -10,6 +10,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.uimanager.ThemedReactContext;
 import com.recyclerviewandroid.libs.GalleryAlbumProvider;
 import com.recyclerviewandroid.libs.domain.GetPhotoInput;
 import com.recyclerviewandroid.libs.domain.GetPhotoOutput;
@@ -18,10 +20,10 @@ public class HomePage {
 
 
   private RecyclerView recyclerView;
-  private Context context;
+  private ThemedReactContext context;
   private  Activity activity;
 
-  public HomePage(RecyclerView recyclerView, Context context,Activity activity) {
+  public HomePage(RecyclerView recyclerView, ThemedReactContext context, Activity activity) {
     this.recyclerView = recyclerView;
     this.context = context;
     this.activity = activity;
@@ -73,7 +75,7 @@ public class HomePage {
       GalleryAlbumProvider.getPhotos(input, this.context, new GalleryAlbumProvider.GetPhotoCallback() {
         @Override
         public void onResult(GetPhotoOutput result) {
-          dataAdaptor = new GalleryListRecylerviewDataAdaptor(result);
+          dataAdaptor = new GalleryListRecylerviewDataAdaptor(result, (ReactContext) context);
           recyclerView.setAdapter(dataAdaptor);
         }
       });

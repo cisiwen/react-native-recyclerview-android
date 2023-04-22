@@ -66,7 +66,7 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
     Long tick  = now.getTime();
     Object one = dataSource.toArrayList().get(0);
     Log.i("setDataSource",String.format("%s-%s",tick,one.toString()));
-    new HomePage(view,view.getContext(),this.context.getCurrentActivity()).loadGallery();
+    new HomePage(view,this.context,this.context.getCurrentActivity()).loadGallery();
   }
 
   @Override
@@ -79,7 +79,7 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
     //ObjectMapper mapper = new ObjectMapper();
 
     Log.i("setDataSourceString",String.format("%s-%s",tick,sources.size()));
-    new HomePage(view,view.getContext(),this.context.getCurrentActivity()).loadGallery();
+    new HomePage(view,this.context,this.context.getCurrentActivity()).loadGallery();
 
   }
 

@@ -22,132 +22,158 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.facebook.react.bridge.ReactContext;
 import com.recyclerviewandroid.R;
 import com.recyclerviewandroid.libs.domain.Asset;
 import com.recyclerviewandroid.libs.domain.GetPhotoOutput;
+import com.recyclerviewandroid.libs.events.EventDispatcher;
 
 import java.io.IOException;
 
 
-public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<GalleryListRecylerviewDataAdaptor.ViewHolder> {
+public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<GalleryListRecylerviewDataAdaptor.ViewHolder> implements EventDispatcher.OnItemLongPressListener {
 
 
-    private static final String TAG = "GalleryListDataAdaptor";
-    private GetPhotoOutput photos;
+  private static final String TAG = "GalleryListDataAdaptor";
+  private GetPhotoOutput photos;
 
-    public  GalleryListRecylerviewDataAdaptor(GetPhotoOutput photos) {
-        this.photos = photos;
-        this.setHasStableIds(true);
+  ReactContext reactContext;
+  public GalleryListRecylerviewDataAdaptor(GetPhotoOutput photos, ReactContext reactContext) {
+    this.photos = photos;
+    this.reactContext = reactContext;
+    this.setHasStableIds(true);
+  }
+
+  @NonNull
+  @Override
+  public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    View v = LayoutInflater.from(parent.getContext())
+      .inflate(R.layout.photo_list_item, parent, false);
+    return new ViewHolder(v, parent.getContext(),this);
+  }
+
+  @Override
+  public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    try {
+      holder.setData(this.photos.assets.get(position));
+    } catch (IOException e) {
+      //throw new RuntimeException(e);
+      Log.println(Log.DEBUG, "Error", e.toString());
     }
-    @NonNull
-    @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.photo_list_item, parent, false);
-        return  new ViewHolder(v,parent.getContext());
-    }
+  }
 
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        try {
-            holder.setData(this.photos.assets.get(position));
-        } catch (IOException e) {
-            //throw new RuntimeException(e);
-            Log.println(Log.DEBUG,"Error",e.toString());
+
+  @Override
+  public long getItemId(int position) {
+    Asset asset = this.photos.assets.get(position);
+    return asset.image.imageId;
+  }
+
+  @Override
+  public int getItemCount() {
+    return this.photos.assets.size();
+  }
+
+  @Override
+  public void onItemLongPressed(int position) {
+    EventDispatcher.sendItemOnLongPress(this.reactContext);
+  }
+
+  public interface Callback {
+    void onResult(Bitmap result);
+  }
+
+  public static class ViewHolder extends RecyclerView.ViewHolder {
+
+
+    ImageView imageView = null;
+    BitmapFactory.Options options;
+    Context context;
+    GalleryListRecylerviewDataAdaptor adaptor;
+
+    public ViewHolder(@NonNull View itemView, Context context, GalleryListRecylerviewDataAdaptor adapter) {
+      super(itemView);
+      this.adaptor = adapter;
+      imageView = itemView.findViewById(R.id.list_item_imageview);
+      options = new BitmapFactory.Options();
+      itemView.setOnLongClickListener(new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+          // Call the onItemLongPressed() method of the adapter
+
+          Log.i("REPRESSION","Triggered");
+          adapter.onItemLongPressed(getAbsoluteAdapterPosition());
+          return true;
         }
+      });
+      this.context = context;
+      //options.inSampleSize=true
     }
 
 
-    @Override
-    public long getItemId(int position) {
-        Asset asset = this.photos.assets.get(position);
-        return  asset.image.imageId;
-    }
-    @Override
-    public int getItemCount() {
-        return this.photos.assets.size();
-    }
+    private static class LoadLocalMediaStoreDataTask extends AsyncTask<Void, Void, Bitmap> {
+      private Context context;
+      private Uri uri;
+      private Long imageId;
 
-    public interface  Callback {
-      void onResult(Bitmap result);
-    }
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+      private Callback callback;
 
+      public LoadLocalMediaStoreDataTask(Asset asset, Context context, Callback bitmapDataCallback) {
+        this.context = context;
+        this.uri = asset.image.imageUri;
 
-        ImageView imageView=null;
-        BitmapFactory.Options options;
-        Context context;
-        public ViewHolder(@NonNull View itemView,Context context) {
-            super(itemView);
-            imageView = itemView.findViewById(R.id.list_item_imageview);
-            options = new BitmapFactory.Options();
-            this.context = context;
-            //options.inSampleSize=true
+        this.imageId = asset.image.imageId;
+        this.callback = bitmapDataCallback;
+      }
+
+      private Bitmap errorBitmap() {
+        int width = 200;
+        int height = 200;
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+
+        Paint paint = new Paint();
+        paint.setColor(Color.BLACK);
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawPaint(paint);
+
+        paint.setColor(Color.WHITE);
+        paint.setAntiAlias(true);
+        paint.setTextSize(14.f);
+        paint.setTextAlign(Paint.Align.CENTER);
+        canvas.drawText("Hello Android!", (width / 2.f), (height / 2.f), paint);
+        return bitmap;
+      }
+
+      @Override
+      protected Bitmap doInBackground(Void... voids) {
+        Bitmap thumbBitmap = null;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+          try {
+            thumbBitmap = this.context.getContentResolver().loadThumbnail(this.uri, new Size(200, 200), null);
+          } catch (IOException e) {
+            Log.e("LoadMediaStoreDataTask", this.uri.toString(), e);
+          } catch (Exception e) {
+            Log.e("LoadMediaStoreDataTask", this.uri.toString(), e);
+          }
+        } else {
+          thumbBitmap = MediaStore.Images.Thumbnails.getThumbnail(this.context.getContentResolver(),
+            this.imageId, MediaStore.Images.Thumbnails.MINI_KIND, null);
         }
-
-
-        private static class  LoadLocalMediaStoreDataTask extends AsyncTask<Void,Void,Bitmap> {
-            private Context context;
-            private Uri uri;
-            private Long imageId;
-
-            private Callback callback;
-
-            public LoadLocalMediaStoreDataTask(Asset asset, Context context,Callback bitmapDataCallback) {
-                this.context = context;
-                this.uri= asset.image.imageUri;
-
-                this.imageId=asset.image.imageId;
-                this.callback = bitmapDataCallback;
-            }
-
-            private  Bitmap errorBitmap(){
-                int width = 200;
-                int height = 200;
-                Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-                Canvas canvas = new Canvas(bitmap);
-
-                Paint paint = new Paint();
-                paint.setColor(Color.BLACK);
-                paint.setStyle(Paint.Style.FILL);
-                canvas.drawPaint(paint);
-
-                paint.setColor(Color.WHITE);
-                paint.setAntiAlias(true);
-                paint.setTextSize(14.f);
-                paint.setTextAlign(Paint.Align.CENTER);
-                canvas.drawText("Hello Android!", (width / 2.f) , (height / 2.f), paint);
-                return  bitmap;
-            }
-            @Override
-            protected Bitmap doInBackground(Void... voids) {
-                Bitmap thumbBitmap = null;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    try {
-                        thumbBitmap = this.context.getContentResolver().loadThumbnail(this.uri, new Size(200,200), null);
-                    } catch (IOException e) {
-                        Log.e("LoadMediaStoreDataTask",this.uri.toString(),e);
-                    }
-                    catch (Exception e){
-                        Log.e("LoadMediaStoreDataTask",this.uri.toString(),e);
-                    }
-                } else {
-                    thumbBitmap = MediaStore.Images.Thumbnails.getThumbnail(this.context.getContentResolver(),
-                            this.imageId, MediaStore.Images.Thumbnails.MINI_KIND, null);
-                }
-                if(thumbBitmap==null){
-                    thumbBitmap = errorBitmap();
-                }
-                return thumbBitmap;
-            }
-            @Override
-            protected void onPostExecute(Bitmap result) {
-                callback.onResult(result);
-            }
+        if (thumbBitmap == null) {
+          thumbBitmap = errorBitmap();
         }
+        return thumbBitmap;
+      }
 
-        public void  setData(Asset asset) throws IOException {
-          Glide.with(this.context).load(asset.image.imageUri.toString()).into(imageView);
+      @Override
+      protected void onPostExecute(Bitmap result) {
+        callback.onResult(result);
+      }
+    }
+
+    public void setData(Asset asset) throws IOException {
+      Glide.with(this.context).load(asset.image.imageUri.toString()).into(imageView);
           /*
             new LoadLocalMediaStoreDataTask(asset,this.context, new Callback(){
 
@@ -157,6 +183,6 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
               }
             }).execute();
             */
-        }
     }
+  }
 }

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { NativeEventEmitter, NativeModules } from 'react-native';
 
 import { StyleSheet, View } from 'react-native';
 import {
@@ -9,6 +10,15 @@ import {
 export default function App() {
   let now = new Date().getTime().toString();
   let sections: SectionDataSource[] = [];
+  React.useEffect(() => {
+    const eventEmitter = new NativeEventEmitter(NativeModules.RecyclerviewAndroidView);
+   const eventListener = eventEmitter.addListener('ON_ITEM_LONG_PRESS', (event: { eventProperty: any; }) => {
+      console.log(event.eventProperty) // "someValue"
+   });
+   return () => {
+     eventListener.remove();
+   }
+  }, []);
   for (let s = 0; s < 50; s++) {
     let section: SectionDataSource = {
       sectionTitle: `Gallery section ${s}`,
