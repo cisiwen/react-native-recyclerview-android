@@ -9,13 +9,15 @@ import Foundation
 @objc(RNCollectionViewController)
 public class RNCollectionViewController:UICollectionViewController,UICollectionViewDelegateFlowLayout,UIGestureRecognizerDelegate {
     
+    
+    public var onLongPressed:(String, Int) -> Void;
     private var data:[SectionData];
-    @objc public init(frame:CGRect) {
+    @objc public init(frame:CGRect,onLongPress: @escaping (String, Int) -> Void) {
         let layout = UICollectionViewFlowLayout();
         layout.scrollDirection = .vertical;
         layout.estimatedItemSize = .zero;
-        
         data=Array();
+        self.onLongPressed=onLongPress;
         super.init(collectionViewLayout: layout);
         layout.headerReferenceSize = CGSize(width: self.collectionView.frame.size.width, height: 20);
         collectionView.register(MediaItemCellView.self, forCellWithReuseIdentifier: "\(MediaItemCellView.self)");
@@ -23,7 +25,7 @@ public class RNCollectionViewController:UICollectionViewController,UICollectionV
         setupLongGestureRecognizerOnCollection();
         
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -107,6 +109,7 @@ public class RNCollectionViewController:UICollectionViewController,UICollectionV
         if let index = indexPath{
             print(index.row);
             toggleSelectionMode();
+            onLongPressed("testing",index.row);
         }
         else{
             print("Could not find index path")

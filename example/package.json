@@ -4,14 +4,13 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
-    "ios": "RCT_NEW_ARCH_ENABLED=1 && react-native run-ios",
+    "ios": "react-native run-ios",
     "start": "react-native start",
-    "pods": "pod-install --quiet",
-    "pod-install": "cd ios && RCT_NEW_ARCH_ENABLED=1 bundle exec pod install && cd .."
+    "pods": "pod-install --quiet"
   },
   "dependencies": {
     "react": "18.2.0",
-    "react-native": "0.71.4"
+    "react-native": "0.71.7"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

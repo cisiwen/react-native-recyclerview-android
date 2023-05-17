@@ -3,6 +3,7 @@ import { NativeEventEmitter, NativeModules } from 'react-native';
 
 import { StyleSheet, View } from 'react-native';
 import {
+  PagerViewOnPageSelectedEvent,
   RecyclerviewAndroidView,
   SectionDataSource,
 } from 'react-native-recyclerview-android';
@@ -10,6 +11,7 @@ import {
 export default function App() {
   let now = new Date().getTime().toString();
   let sections: SectionDataSource[] = [];
+  /*
   React.useEffect(() => {
     const eventEmitter = new NativeEventEmitter(NativeModules.RecyclerviewAndroidView);
    const eventListener = eventEmitter.addListener('ON_ITEM_LONG_PRESS', (event: { eventProperty: any; }) => {
@@ -18,7 +20,7 @@ export default function App() {
    return () => {
      eventListener.remove();
    }
-  }, []);
+  }, []);*/
   for (let s = 0; s < 50; s++) {
     let section: SectionDataSource = {
       sectionTitle: `Gallery section ${s}`,
@@ -39,6 +41,9 @@ export default function App() {
     sections.push(section);
   }
 
+  const _onPageSelected = (e: PagerViewOnPageSelectedEvent) => {
+    
+  };
   console.log(now, new Date().getTime().toString());
   now = new Date().getTime().toString();
   const dataSourceString = JSON.stringify(sections);
@@ -46,6 +51,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <RecyclerviewAndroidView
+        onPageSelected ={_onPageSelected}
         dataSourceString={dataSourceString}
         color="#32a852"
         style={styles.box}

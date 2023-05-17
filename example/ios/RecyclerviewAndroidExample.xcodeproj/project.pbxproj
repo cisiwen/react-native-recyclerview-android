@@ -488,6 +488,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
 				ENABLE_BITCODE = NO;
+				GCC_INPUT_FILETYPE = automatic;
 				INFOPLIST_FILE = RecyclerviewAndroidExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -515,6 +516,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
+				GCC_INPUT_FILETYPE = automatic;
 				INFOPLIST_FILE = RecyclerviewAndroidExample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
