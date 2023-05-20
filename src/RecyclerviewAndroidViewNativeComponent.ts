@@ -26,7 +26,7 @@ interface NativeProps extends ViewProps {
   color?: string;
   dataSourceString?: string;
   dataSource?: Array<Asset>;
-  onPageSelected: DirectEventHandler<OnPageSelectedEventData>;
+  onLongPressed: DirectEventHandler<OnPageSelectedEventData>;
 }
 
-export default codegenNativeComponent<NativeProps>("RecyclerviewAndroidView");
+export default codegenNativeComponent<NativeProps>("GalleryListView");

@@ -4,3 +4,4 @@
 @interface RecyclerviewAndroidViewManager : RCTViewManager
 @property(nonatomic, copy) RCTDirectEventBlock onPageSelected;
 @end
+    

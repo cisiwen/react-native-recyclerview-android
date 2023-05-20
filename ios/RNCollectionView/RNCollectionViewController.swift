@@ -20,6 +20,7 @@ public class RNCollectionViewController:UICollectionViewController,UICollectionV
         self.onLongPressed=onLongPress;
         super.init(collectionViewLayout: layout);
         layout.headerReferenceSize = CGSize(width: self.collectionView.frame.size.width, height: 20);
+        collectionView.frame = frame;
         collectionView.register(MediaItemCellView.self, forCellWithReuseIdentifier: "\(MediaItemCellView.self)");
         collectionView.register(MediaListHeaderCellView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "\(MediaListHeaderCellView.self)")
         setupLongGestureRecognizerOnCollection();
@@ -157,14 +158,14 @@ public class RNCollectionViewController:UICollectionViewController,UICollectionV
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let collectionWidth = collectionView.bounds.width;
+        let collectionWidth = collectionView.frame.width;
         let media = data[indexPath.section].data[indexPath.row];
         if(media.mediaType==MediaType.HEADER) {
             return CGSize(width: collectionWidth, height: 30);
         }
         else
         {
-            return CGSize(width: collectionWidth / 4 - 1, height: collectionWidth / 4-1);
+            return CGSize(width: 430 / 4 - 1, height: 430 / 4-1);
         }
     }
     

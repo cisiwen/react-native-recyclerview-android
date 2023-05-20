@@ -7,7 +7,7 @@
 
 import Foundation
 @objc(RNUICollectionView)
-public class RNUICollectionView:UICollectionView, UICollectionViewDataSource,UICollectionViewDelegate {
+public class RNUICollectionView:UICollectionView,UICollectionViewDataSource,UICollectionViewDelegate {
     
     @objc public init(frame: CGRect) {
         let layout = UICollectionViewFlowLayout();

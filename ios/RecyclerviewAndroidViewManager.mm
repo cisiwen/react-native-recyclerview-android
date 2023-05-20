@@ -8,7 +8,7 @@
 
 @implementation RecyclerviewAndroidViewManager
 
-RCT_EXPORT_MODULE(RecyclerviewAndroidView)
+//RCT_EXPORT_MODULE(RecyclerviewAndroidView)
 
 RCT_EXPORT_VIEW_PROPERTY(onPageSelected, RCTDirectEventBlock)
 

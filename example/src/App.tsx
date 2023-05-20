@@ -41,8 +41,8 @@ export default function App() {
     sections.push(section);
   }
 
-  const _onPageSelected = (e: PagerViewOnPageSelectedEvent) => {
-    
+  const onLongPressed = (e: PagerViewOnPageSelectedEvent) => {
+      console.log('onLongPressed', e.nativeEvent);
   };
   console.log(now, new Date().getTime().toString());
   now = new Date().getTime().toString();
@@ -51,7 +51,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <RecyclerviewAndroidView
-        onPageSelected ={_onPageSelected}
+        onLongPressed ={onLongPressed}
         dataSourceString={dataSourceString}
         color="#32a852"
         style={styles.box}
@@ -63,13 +63,12 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#ffcc00',
+     
   },
   box: {
-    width: '100%',
-    height: '100%',
+    flex: 1,
+    overflow: 'hidden',
     backgroundColor: 'green',
     margin: 0,
   },
