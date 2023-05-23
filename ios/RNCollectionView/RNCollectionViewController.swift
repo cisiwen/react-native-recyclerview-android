@@ -165,7 +165,7 @@ public class RNCollectionViewController:UICollectionViewController,UICollectionV
         }
         else
         {
-            return CGSize(width: 430 / 4 - 1, height: 430 / 4-1);
+            return CGSize(width: collectionWidth / 4 - 1, height: collectionWidth / 4-1);
         }
     }
     

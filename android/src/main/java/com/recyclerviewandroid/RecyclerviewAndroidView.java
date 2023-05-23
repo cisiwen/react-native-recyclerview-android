@@ -50,158 +50,6 @@ public class RecyclerviewAndroidView extends RecyclerView {
     }
   }
 
-  static class RecyclableWrapperViewGroup extends ViewGroup {
-
-    private ReactListAdapter mAdapter;
-    private int mLastMeasuredWidth;
-    private int mLastMeasuredHeight;
-
-    public RecyclableWrapperViewGroup(Context context, ReactListAdapter adapter) {
-      super(context);
-      mAdapter = adapter;
-      mLastMeasuredHeight = 10;
-      mLastMeasuredWidth = 10;
-    }
-
-    private OnLayoutChangeListener mChildLayoutChangeListener = new OnLayoutChangeListener() {
-      @Override
-      public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-        int oldHeight = (oldBottom - oldTop);
-        int newHeight = (bottom - top);
-
-        if (oldHeight != newHeight) {
-          if (getParent() != null) {
-            requestLayout();
-            getParent().requestLayout();
-          }
-        }
-      }
-    };
-
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-      // This view will only have one child that is managed by the `NativeViewHierarchyManager` and
-      // its position and dimensions are set separately. We don't need to handle its layouting here
-    }
-
-    @Override
-    public void onViewAdded(View child) {
-      super.onViewAdded(child);
-      child.addOnLayoutChangeListener(mChildLayoutChangeListener);
-    }
-
-    @Override
-    public void onViewRemoved(View child) {
-      super.onViewRemoved(child);
-      child.removeOnLayoutChangeListener(mChildLayoutChangeListener);
-    }
-
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-      // We override measure spec and use dimensions of the children. Children is a view added
-      // from the adapter and always have a correct dimensions specified as they are calculated
-      // and set with NativeViewHierarchyManager.
-      // In case there is no view attached, we use the last measured dimensions.
-
-      if (getChildCount() > 0) {
-        View child = getChildAt(0);
-        mLastMeasuredWidth = child.getMeasuredWidth();
-        mLastMeasuredHeight = child.getMeasuredHeight();
-        setMeasuredDimension(mLastMeasuredWidth, mLastMeasuredHeight);
-      } else {
-        setMeasuredDimension(mLastMeasuredWidth, mLastMeasuredHeight);
-      }
-    }
-
-    public ReactListAdapter getAdapter() {
-      return mAdapter;
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-      // Similarly to ReactViewGroup, we return true.
-      // In this case it is necessary in order to force the RecyclerView to intercept the touch events,
-      // in this way we can exactly know when the drag starts because "onInterceptTouchEvent"
-      // of the RecyclerView will return true.
-      return true;
-    }
-  }
-
-  static class ReactListAdapter extends Adapter<ConcreteViewHolder> {
-
-    private final List<RecyclerviewAndroidViewItemView> mViews = new ArrayList<>();
-    private final RecyclerviewAndroidView mScrollView;
-    private int mItemCount = 0;
-
-    public ReactListAdapter(RecyclerviewAndroidView scrollView) {
-      mScrollView = scrollView;
-    }
-
-    public void addView(RecyclerviewAndroidViewItemView child, int index) {
-      mViews.add(index, child);
-
-      final int itemIndex = child.getItemIndex();
-
-      notifyItemChanged(itemIndex);
-    }
-
-    public void removeViewAt(int index) {
-      RecyclerviewAndroidViewItemView child = mViews.get(index);
-      if (child != null) {
-        mViews.remove(index);
-      }
-    }
-
-    public int getViewCount() {
-      return mViews.size();
-    }
-
-    @Override
-    public ConcreteViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-      return new ConcreteViewHolder(new RecyclableWrapperViewGroup(parent.getContext(), this));
-    }
-
-    @Override
-    public void onBindViewHolder(ConcreteViewHolder holder, int position) {
-      RecyclableWrapperViewGroup vg = (RecyclableWrapperViewGroup) holder.itemView;
-      View row = getViewByItemIndex(position);
-      if (row != null && row.getParent() != vg) {
-        if (row.getParent() != null) {
-          ((ViewGroup) row.getParent()).removeView(row);
-        }
-        vg.addView(row, 0);
-      }
-    }
-
-    @Override
-    public void onViewRecycled(ConcreteViewHolder holder) {
-      super.onViewRecycled(holder);
-      ((RecyclableWrapperViewGroup) holder.itemView).removeAllViews();
-    }
-
-    @Override
-    public int getItemCount() {
-      return mItemCount;
-    }
-
-    public void setItemCount(int itemCount) {
-      this.mItemCount = itemCount;
-    }
-
-    public View getView(int index) {
-      return mViews.get(index);
-    }
-
-    public RecyclerviewAndroidViewItemView getViewByItemIndex(int position) {
-      for (int i = 0; i < mViews.size(); i++) {
-        if (mViews.get(i).getItemIndex() == position) {
-          return mViews.get(i);
-        }
-      }
-
-      return null;
-    }
-  }
 
   private boolean mDragging;
   private int mFirstVisibleIndex, mLastVisibleIndex;
@@ -210,8 +58,8 @@ public class RecyclerviewAndroidView extends RecyclerView {
     return (ReactContext) ((ContextThemeWrapper) getContext()).getBaseContext();
   }
 
-  @Override
-  protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+
+  protected void XXXonScrollChanged(int l, int t, int oldl, int oldt) {
     super.onScrollChanged(l, t, oldl, oldt);
     if (mOnScrollDispatchHelper.onScrollChanged(l, t)) {
       getReactContext().getNativeModule(UIManagerModule.class).getEventDispatcher()
@@ -261,33 +109,20 @@ public class RecyclerviewAndroidView extends RecyclerView {
     //setHasFixedSize(true);
     ((DefaultItemAnimator)getItemAnimator()).setSupportsChangeAnimations(false);
 
-
-    setLayoutManager(new GridLayoutManager(context,4));
+    GridLayoutManager layoutManager = new GridLayoutManager(context,4);
+    setLayoutManager(layoutManager);
+    layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup(){
+      @Override
+      public int getSpanSize(int position) {
+        return  getAdapter().getItemViewType(position)==1 ? 4: 1;
+      }
+    });
     RecyclerView.LayoutParams params = new RecyclerView.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
       ViewGroup.LayoutParams.WRAP_CONTENT);
     this.setLayoutParams(params);
     //setAdapter(new RecyclerviewAndroidView.ReactListAdapter(this));
   }
 
-  void addViewToAdapter(RecyclerviewAndroidViewItemView child, int index) {
-    ((RecyclerviewAndroidView.ReactListAdapter) getAdapter()).addView(child, index);
-  }
-
-  void removeViewFromAdapter(int index) {
-    ((RecyclerviewAndroidView.ReactListAdapter) getAdapter()).removeViewAt(index);
-  }
-
-  View getChildAtFromAdapter(int index) {
-    return ((RecyclerviewAndroidView.ReactListAdapter) getAdapter()).getView(index);
-  }
-
-  int getChildCountFromAdapter() {
-    return ((RecyclerviewAndroidView.ReactListAdapter) getAdapter()).getViewCount();
-  }
-
-  void setItemCount(int itemCount) {
-    ((RecyclerviewAndroidView.ReactListAdapter) getAdapter()).setItemCount(itemCount);
-  }
 
   int getItemCount() {
 
@@ -295,8 +130,8 @@ public class RecyclerviewAndroidView extends RecyclerView {
   }
 
 
-  @Override
-  public boolean onInterceptTouchEvent(MotionEvent ev) {
+
+  public boolean XXXXonInterceptTouchEvent(MotionEvent ev) {
     if (super.onInterceptTouchEvent(ev)) {
       NativeGestureUtil.notifyNativeGestureStarted(this, ev);
       mDragging = true;
@@ -318,8 +153,8 @@ public class RecyclerviewAndroidView extends RecyclerView {
     return false;
   }
 
-  @Override
-  public boolean onTouchEvent(MotionEvent ev) {
+
+  public boolean XXonTouchEvent(MotionEvent ev) {
     int action = ev.getAction() & MotionEvent.ACTION_MASK;
     if (action == MotionEvent.ACTION_UP && mDragging) {
       mDragging = false;
@@ -342,8 +177,8 @@ public class RecyclerviewAndroidView extends RecyclerView {
 
   private boolean mRequestedLayout = false;
 
-  @Override
-  public void requestLayout() {
+
+  public void XXXXrequestLayout() {
     super.requestLayout();
 
     if (!mRequestedLayout) {
@@ -360,48 +195,8 @@ public class RecyclerviewAndroidView extends RecyclerView {
     }
   }
 
-  @Override
-  public void scrollToPosition(int position) {
-    this.scrollToPosition(position, new RecyclerviewAndroidView.ScrollOptions());
-  }
 
-  public void scrollToPosition(final int position, final RecyclerviewAndroidView.ScrollOptions options) {
-    if (options.viewPosition != null) {
-      final LinearLayoutManager layoutManager = (LinearLayoutManager) getLayoutManager();
-      final RecyclerviewAndroidView.ReactListAdapter adapter = (RecyclerviewAndroidView.ReactListAdapter) getAdapter();
-      final View view = adapter.getViewByItemIndex(position);
-      if (view != null) {
-        final int viewHeight = view.getHeight();
-
-        // In order to calculate the correct offset, we need the height of the target view.
-        // If the height of the view is not available it means RN has not calculated it yet.
-        // So let's listen to the layout change and we will retry scrolling.
-        if (viewHeight == 0) {
-          view.addOnLayoutChangeListener(new OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-              view.removeOnLayoutChangeListener(this);
-              scrollToPosition(position, options);
-            }
-          });
-          return;
-        }
-
-        final int boxStart = layoutManager.getPaddingTop();
-        final int boxEnd = layoutManager.getHeight() - layoutManager.getPaddingBottom();
-        final int boxHeight = boxEnd - boxStart;
-        float viewOffset = options.viewOffset != null ? PixelUtil.toPixelFromDIP(options.viewOffset) : 0;
-        int offset = (int) ((boxHeight - viewHeight) * options.viewPosition + viewOffset);
-        layoutManager.scrollToPositionWithOffset(position, offset);
-        return;
-      }
-    }
-
-    super.scrollToPosition(position);
-  }
-
-  @Override
-  public void smoothScrollToPosition(int position) {
+  public void xxxxsmoothScrollToPosition(int position) {
     this.smoothScrollToPosition(position, new RecyclerviewAndroidView.ScrollOptions());
   }
 

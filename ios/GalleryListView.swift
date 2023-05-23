@@ -39,7 +39,7 @@ class GalleryListView:UIView {
     
     
     func addCollectionView(){
-        let aRect = CGRectMake(0, 0, 430, 932);
+        let aRect = CGRectMake(0, 0, 100, 100);
         rnCollectionViewController=RNCollectionViewController(frame: aRect, onLongPress:callback);
         if(rnCollectionViewController != nil){
             self.addSubview((rnCollectionViewController?.collectionView)!);

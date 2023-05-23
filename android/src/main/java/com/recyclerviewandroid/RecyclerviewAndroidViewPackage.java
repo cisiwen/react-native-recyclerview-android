@@ -15,7 +15,7 @@ public class RecyclerviewAndroidViewPackage implements ReactPackage {
   public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
     List<ViewManager> viewManagers = new ArrayList<>();
     viewManagers.add(new RecyclerviewAndroidViewManager());
-    viewManagers.add(new RecyclerviewAndroidViewItemViewManager());
+    //viewManagers.add(new RecyclerviewAndroidViewItemViewManager());
     return viewManagers;
   }
 

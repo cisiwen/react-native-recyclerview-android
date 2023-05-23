@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
@@ -13,8 +14,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.uimanager.ThemedReactContext;
 import com.recyclerviewandroid.libs.GalleryAlbumProvider;
+import com.recyclerviewandroid.libs.domain.Asset;
 import com.recyclerviewandroid.libs.domain.GetPhotoInput;
 import com.recyclerviewandroid.libs.domain.GetPhotoOutput;
+import com.recyclerviewandroid.libs.domain.Image;
+import com.recyclerviewandroid.libs.domain.Media;
+import com.recyclerviewandroid.libs.javascript.ReactAsset;
+import com.recyclerviewandroid.libs.javascript.ReactSectionDataSource;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HomePage {
 
@@ -67,6 +76,33 @@ public class HomePage {
     return false;
   }
 
+  public  void setDataSourceMedia(List<ReactSectionDataSource> media) {
+    GetPhotoOutput result = new GetPhotoOutput();
+    result.assets = new ArrayList<Asset>();
+    int id = 0;
+    for (ReactSectionDataSource temp : media) {
+      id++;
+      Asset header = new Asset();
+      header.type = "Header";
+      header.group_name = temp.sectionTitle;
+      header.group_id = new Long(id);
+      result.assets.add(header);
+
+
+      for (ReactAsset asset : temp.data) {
+        id++;
+        Asset oneMedia = new Asset();
+        oneMedia.type = "IMAGE";
+        oneMedia.image = new Image();
+        oneMedia.image.imageId = new Long(id);
+        oneMedia.image.imageUri = Uri.parse(asset.uri);
+        //oneMedia.image.imageId= asset.contentId;
+        result.assets.add(oneMedia);
+      }
+    }
+    dataAdaptor = new GalleryListRecylerviewDataAdaptor(result, (ReactContext) context);
+    recyclerView.setAdapter(dataAdaptor);
+  }
   public void loadGallery() {
     if (this.checkPermission()) {
       GetPhotoInput input = new GetPhotoInput();

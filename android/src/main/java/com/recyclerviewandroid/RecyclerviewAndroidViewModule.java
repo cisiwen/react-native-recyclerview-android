@@ -13,6 +13,6 @@ public class RecyclerviewAndroidViewModule extends ReactContextBaseJavaModule {
   @NonNull
   @Override
   public String getName() {
-    return "RecyclerviewAndroidView";
+    return "GalleryListView";
   }
 }

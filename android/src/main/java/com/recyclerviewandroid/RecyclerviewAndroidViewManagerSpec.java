@@ -15,12 +15,4 @@ public abstract class RecyclerviewAndroidViewManagerSpec<T extends View> extends
   public abstract void setColor(T view, @Nullable String value);
   public abstract void setDataSource(T view, @Nullable ReadableArray dataSource);
   public abstract void setDataSourceString(RecyclerviewAndroidView view, @Nullable String dataSource);
-
-  public abstract void addView(RecyclerviewAndroidView parent, View child, int index);
-
-  public abstract int getChildCount(RecyclerviewAndroidView parent);
-
-  public abstract View getChildAt(RecyclerviewAndroidView parent, int index);
-
-  public abstract void removeViewAt(RecyclerviewAndroidView parent, int index);
 }

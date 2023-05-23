@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,9 +48,15 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
   @NonNull
   @Override
   public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-    View v = LayoutInflater.from(parent.getContext())
-      .inflate(R.layout.photo_list_item, parent, false);
-    return new ViewHolder(v, parent.getContext(),this);
+    View v;
+    if (viewType == 1) {
+      v = LayoutInflater.from(parent.getContext())
+        .inflate(R.layout.list_section_header, parent, false);
+    } else {
+      v = LayoutInflater.from(parent.getContext())
+        .inflate(R.layout.photo_list_item, parent, false);
+    }
+    return new ViewHolder(v, parent.getContext(), this);
   }
 
   @Override
@@ -66,7 +73,7 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
   @Override
   public long getItemId(int position) {
     Asset asset = this.photos.assets.get(position);
-    return asset.image.imageId;
+    return asset.type == "Header" ? asset.group_id :  asset.image.imageId;
   }
 
   @Override
@@ -79,6 +86,11 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
     EventDispatcher.sendItemOnLongPress(this.reactContext);
   }
 
+  @Override
+  public int getItemViewType(int position) {
+    Asset asset = this.photos.assets.get(position);
+    return  asset.type=="Header" ? 1 :0;
+  }
   public interface Callback {
     void onResult(Bitmap result);
   }
@@ -87,6 +99,7 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
 
 
     ImageView imageView = null;
+    TextView headerTextView =null;
     BitmapFactory.Options options;
     Context context;
     GalleryListRecylerviewDataAdaptor adaptor;
@@ -95,19 +108,23 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
       super(itemView);
       this.adaptor = adapter;
       imageView = itemView.findViewById(R.id.list_item_imageview);
+      headerTextView = itemView.findViewById(R.id.header_title);
       options = new BitmapFactory.Options();
-      itemView.setOnLongClickListener(new View.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View v) {
-          // Call the onItemLongPressed() method of the adapter
 
-          Log.i("REPRESSION","Triggered");
-          adapter.onItemLongPressed(getAbsoluteAdapterPosition());
-          return true;
-        }
-      });
-      this.context = context;
-      //options.inSampleSize=true
+      if (itemView != null) {
+        itemView.setOnLongClickListener(new View.OnLongClickListener() {
+          @Override
+          public boolean onLongClick(View v) {
+            // Call the onItemLongPressed() method of the adapter
+
+            Log.i("REPRESSION", "Triggered");
+            adapter.onItemLongPressed(getAbsoluteAdapterPosition());
+            return true;
+          }
+        });
+        this.context = context;
+        //options.inSampleSize=true
+      }
     }
 
 
@@ -173,7 +190,13 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
     }
 
     public void setData(Asset asset) throws IOException {
-      Glide.with(this.context).load(asset.image.imageUri.toString()).into(imageView);
+
+      if(imageView!=null) {
+        Glide.with(this.context).load(asset.image.imageUri.toString()).into(imageView);
+      }
+      else if(asset.type=="Header"){
+          headerTextView.setText(asset.group_name);
+      }
           /*
             new LoadLocalMediaStoreDataTask(asset,this.context, new Callback(){
 

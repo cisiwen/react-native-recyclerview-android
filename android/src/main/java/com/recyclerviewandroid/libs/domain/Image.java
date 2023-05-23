@@ -6,7 +6,7 @@ public class Image {
     public String filename;
     public String uri;
     public Uri imageUri;
-    public  Long imageId;
+    public  long imageId;
     public Long fileSize;
     public String extension;
     public int orientation;
