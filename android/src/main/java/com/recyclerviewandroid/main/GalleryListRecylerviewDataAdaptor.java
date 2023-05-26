@@ -39,9 +39,11 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
   private GetPhotoOutput photos;
 
   ReactContext reactContext;
-  public GalleryListRecylerviewDataAdaptor(GetPhotoOutput photos, ReactContext reactContext) {
+  View view;
+  public GalleryListRecylerviewDataAdaptor(View view,GetPhotoOutput photos, ReactContext reactContext) {
     this.photos = photos;
     this.reactContext = reactContext;
+    this.view = view;
     this.setHasStableIds(true);
   }
 
@@ -83,7 +85,7 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
 
   @Override
   public void onItemLongPressed(int position) {
-    EventDispatcher.sendItemOnLongPress(this.reactContext);
+    EventDispatcher.sendItemOnLongPress(this.reactContext, view.getId());
   }
 
   @Override

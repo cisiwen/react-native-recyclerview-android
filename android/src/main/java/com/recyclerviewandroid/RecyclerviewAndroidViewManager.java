@@ -17,6 +17,7 @@ import com.facebook.react.views.scroll.ScrollEventType;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.recyclerviewandroid.libs.domain.Media;
+import com.recyclerviewandroid.libs.events.LongPressEvent;
 import com.recyclerviewandroid.libs.javascript.ReactSectionDataSource;
 import com.recyclerviewandroid.main.HomePage;
 
@@ -25,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.security.PublicKey;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -78,10 +80,16 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
     Date now = new Date();
     Long tick  = now.getTime();
     //ObjectMapper mapper = new ObjectMapper();
-
     Log.i("setDataSourceString",String.format("%s-%s",tick,sources.size()));
     new HomePage(view,this.context,this.context.getCurrentActivity()).setDataSourceMedia(sources);
-
   }
+
+  @Override
+  public  Map getExportedCustomDirectEventTypeConstants(){
+    return MapBuilder.builder().put(
+      LongPressEvent.EVENT_NAME, MapBuilder.of("registrationName","onLongPressed")
+    ).build();
+  }
+
 
 }

@@ -30,7 +30,7 @@ public class HomePage {
 
   private RecyclerView recyclerView;
   private ThemedReactContext context;
-  private  Activity activity;
+  private Activity activity;
 
   public HomePage(RecyclerView recyclerView, ThemedReactContext context, Activity activity) {
     this.recyclerView = recyclerView;
@@ -76,7 +76,7 @@ public class HomePage {
     return false;
   }
 
-  public  void setDataSourceMedia(List<ReactSectionDataSource> media) {
+  public void setDataSourceMedia(List<ReactSectionDataSource> media) {
     GetPhotoOutput result = new GetPhotoOutput();
     result.assets = new ArrayList<Asset>();
     int id = 0;
@@ -100,9 +100,10 @@ public class HomePage {
         result.assets.add(oneMedia);
       }
     }
-    dataAdaptor = new GalleryListRecylerviewDataAdaptor(result, (ReactContext) context);
+    dataAdaptor = new GalleryListRecylerviewDataAdaptor(recyclerView, result, (ReactContext) context);
     recyclerView.setAdapter(dataAdaptor);
   }
+
   public void loadGallery() {
     if (this.checkPermission()) {
       GetPhotoInput input = new GetPhotoInput();
@@ -111,7 +112,7 @@ public class HomePage {
       GalleryAlbumProvider.getPhotos(input, this.context, new GalleryAlbumProvider.GetPhotoCallback() {
         @Override
         public void onResult(GetPhotoOutput result) {
-          dataAdaptor = new GalleryListRecylerviewDataAdaptor(result, (ReactContext) context);
+          dataAdaptor = new GalleryListRecylerviewDataAdaptor(recyclerView, result, (ReactContext) context);
           recyclerView.setAdapter(dataAdaptor);
         }
       });
