@@ -35,6 +35,10 @@
 			</dict>
 		</dict>
 	</dict>
+  <key>NSPhotoLibraryAddUsageDescription</key>
+  <string>Allow $(PRODUCT_NAME) to save photos</string>
+  <key>NSPhotoLibraryUsageDescription</key>
+  <string>Allow SDWebImage Demo to show Photos Library images</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string></string>
 	<key>UILaunchStoryboardName</key>

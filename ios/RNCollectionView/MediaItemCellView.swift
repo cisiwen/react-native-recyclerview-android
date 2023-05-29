@@ -6,7 +6,6 @@
 //
 
 import SDWebImagePhotosPlugin
-import SDWebImage
 import Foundation
 import M13Checkbox
 class MediaItemCellView:UICollectionViewCell {
@@ -54,9 +53,25 @@ class MediaItemCellView:UICollectionViewCell {
             self.addSubview(imageView);
         }
         //let manager = SDWebImageManager(cache: SDImageCache.shared, loader: SDImagePhotosLoader.shared);
-        imageView.sd_setImage(with: URL(string: mediaItem.uri));
+        loadImage(uriString: mediaItem.uri);
         //self.toggleSelection();
         //imageView.contentMode=ContentMode.scaleAspectFill;
+    }
+    
+    func loadImage(uriString:String){
+        if(uriString.starts(with: "ph://")){
+            //ph://ED7AC36B-A150-4C38-BB8C-B6D696F4F2ED/L0/001/IMG_0005.JPG
+            let id = uriString.replacingOccurrences(of: "ph://", with: "");
+            var parts = id.split(separator: "/");
+            parts.removeLast();
+            let identifier: String = parts.joined(separator: "/");
+            let photosURL = NSURL.sd_URL(withAssetLocalIdentifier: identifier) as URL;
+            imageView.sd_setImage(with: photosURL);
+
+        }
+        else if(uriString.starts(with: "http")){
+            imageView.sd_setImage(with: URL(string: uriString));
+        }
     }
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

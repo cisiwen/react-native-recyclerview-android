@@ -26,22 +26,25 @@ export default function App() {
       sectionId: s.toString(),
       data: [],
     };
-    for (let i = 0; i < 120; i++) {
+    for (let i = 0; i < 100; i++) {
       section.data.push({
         contentId: `${i}`,
-        uri: 'https://live.staticflickr.com/3469/3700376791_c5833828b3_b.jpg',
+        uri:
+          i == 0
+            ? 'ph://CC95F08C-88C3-4012-9D6D-64A413D254B3/L0/001/IMG_0111.HEIC'
+            : 'https://live.staticflickr.com/3469/3700376791_c5833828b3_b.jpg',
         contentUri: null, //'https://live.staticflickr.com/3469/3700376791_c5833828b3_b.jpg',
         width: now,
         title: null,
         mediaType: 'image/jpeg',
         height: now,
-      }); 
+      });
     }
     sections.push(section);
   }
 
   const onLongPressed = (e: PagerViewOnPageSelectedEvent) => {
-      console.log('onLongPressed', e.nativeEvent);
+    console.log('onLongPressed', e.nativeEvent);
   };
   console.log(now, new Date().getTime().toString());
   now = new Date().getTime().toString();
@@ -50,7 +53,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <RecyclerviewAndroidView
-        onLongPressed ={onLongPressed}
+        onLongPressed={onLongPressed}
         dataSourceString={dataSourceString}
         color="#32a852"
         style={styles.box}
@@ -63,7 +66,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#ffcc00',
-     
   },
   box: {
     flex: 1,
