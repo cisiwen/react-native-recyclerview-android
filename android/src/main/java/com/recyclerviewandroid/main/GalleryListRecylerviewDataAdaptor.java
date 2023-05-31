@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -27,6 +28,7 @@ import com.facebook.react.bridge.ReactContext;
 import com.recyclerviewandroid.R;
 import com.recyclerviewandroid.libs.domain.Asset;
 import com.recyclerviewandroid.libs.domain.GetPhotoOutput;
+import com.recyclerviewandroid.libs.domain.SectionHeaderStyle;
 import com.recyclerviewandroid.libs.events.EventDispatcher;
 
 import java.io.IOException;
@@ -38,12 +40,15 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
   private static final String TAG = "GalleryListDataAdaptor";
   private GetPhotoOutput photos;
 
+  private SectionHeaderStyle headerStyle;
+
   ReactContext reactContext;
   View view;
-  public GalleryListRecylerviewDataAdaptor(View view,GetPhotoOutput photos, ReactContext reactContext) {
+  public GalleryListRecylerviewDataAdaptor(View view,GetPhotoOutput photos, SectionHeaderStyle headerStyle, ReactContext reactContext) {
     this.photos = photos;
     this.reactContext = reactContext;
     this.view = view;
+    this.headerStyle = headerStyle;
     this.setHasStableIds(true);
   }
 
@@ -54,11 +59,39 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
     if (viewType == 1) {
       v = LayoutInflater.from(parent.getContext())
         .inflate(R.layout.list_section_header, parent, false);
+      this.setSectionHeaderStyle(v,this.headerStyle);
     } else {
       v = LayoutInflater.from(parent.getContext())
         .inflate(R.layout.photo_list_item, parent, false);
     }
     return new ViewHolder(v, parent.getContext(), this);
+  }
+
+  public  void  setSectionHeaderStyle(View view, SectionHeaderStyle style){
+    if(style!=null) {
+      if (style.BackgroudColor != null) {
+        view.setBackgroundColor(Color.parseColor(style.BackgroudColor));
+      }
+      if (style.Padding > -1) {
+        view.setPadding(style.Padding, style.Padding, style.Padding, style.Padding);
+      }
+      if (style.FontSize > 0 || style.FontWeight > 0) {
+        TextView textView = view.findViewById(R.id.header_title);
+        if (textView != null) {
+          if (style.FontSize > 0) {
+            textView.setTextSize(style.FontSize);
+          }
+          if(style.FontColor!=null){
+            textView.setTextColor(Color.parseColor(style.FontColor));
+          }
+          if (style.FontWeight > 0) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+              textView.setTypeface(Typeface.create(null,style.FontWeight,false));
+            }
+          }
+        }
+      }
+    }
   }
 
   @Override
@@ -197,6 +230,7 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
         Glide.with(this.context).load(asset.image.imageUri.toString()).into(imageView);
       }
       else if(asset.type=="Header"){
+
           headerTextView.setText(asset.group_name);
       }
           /*

@@ -5,6 +5,7 @@ import {
   PagerViewOnPageSelectedEvent,
   RecyclerviewAndroidView,
   SectionDataSource,
+  SectionHeaderStyle,
 } from 'react-native-recyclerview-android';
 
 export default function App() {
@@ -30,7 +31,7 @@ export default function App() {
       section.data.push({
         contentId: `${i}`,
         uri:
-          i == 0
+          i == -1
             ? 'ph://CC95F08C-88C3-4012-9D6D-64A413D254B3/L0/001/IMG_0111.HEIC'
             : 'https://live.staticflickr.com/3469/3700376791_c5833828b3_b.jpg',
         contentUri: null, //'https://live.staticflickr.com/3469/3700376791_c5833828b3_b.jpg',
@@ -50,9 +51,19 @@ export default function App() {
   now = new Date().getTime().toString();
   const dataSourceString = JSON.stringify(sections);
   console.log('json.stringfy', now, new Date().getTime().toString());
+  const sectionHeaderStyle:SectionHeaderStyle = {
+    BackgroudColor: '#565656',
+    FontSize: 20,
+    FontWeight: 900,
+    FontColor: '#ffffff',
+    Padding: 10
+  }
+  
   return (
     <View style={styles.container}>
       <RecyclerviewAndroidView
+         sectionHeaderStyle={JSON
+          .stringify(sectionHeaderStyle)}
         onLongPressed={onLongPressed}
         dataSourceString={dataSourceString}
         color="#32a852"

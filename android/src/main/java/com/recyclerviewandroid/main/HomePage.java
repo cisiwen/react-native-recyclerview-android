@@ -19,6 +19,7 @@ import com.recyclerviewandroid.libs.domain.GetPhotoInput;
 import com.recyclerviewandroid.libs.domain.GetPhotoOutput;
 import com.recyclerviewandroid.libs.domain.Image;
 import com.recyclerviewandroid.libs.domain.Media;
+import com.recyclerviewandroid.libs.domain.SectionHeaderStyle;
 import com.recyclerviewandroid.libs.javascript.ReactAsset;
 import com.recyclerviewandroid.libs.javascript.ReactSectionDataSource;
 
@@ -76,7 +77,7 @@ public class HomePage {
     return false;
   }
 
-  public void setDataSourceMedia(List<ReactSectionDataSource> media) {
+  public void setDataSourceMedia(List<ReactSectionDataSource> media, SectionHeaderStyle headerStyle) {
     GetPhotoOutput result = new GetPhotoOutput();
     result.assets = new ArrayList<Asset>();
     int id = 0;
@@ -100,7 +101,7 @@ public class HomePage {
         result.assets.add(oneMedia);
       }
     }
-    dataAdaptor = new GalleryListRecylerviewDataAdaptor(recyclerView, result, (ReactContext) context);
+    dataAdaptor = new GalleryListRecylerviewDataAdaptor(recyclerView, result,headerStyle, (ReactContext) context);
     recyclerView.setAdapter(dataAdaptor);
   }
 
@@ -112,7 +113,7 @@ public class HomePage {
       GalleryAlbumProvider.getPhotos(input, this.context, new GalleryAlbumProvider.GetPhotoCallback() {
         @Override
         public void onResult(GetPhotoOutput result) {
-          dataAdaptor = new GalleryListRecylerviewDataAdaptor(recyclerView, result, (ReactContext) context);
+          dataAdaptor = new GalleryListRecylerviewDataAdaptor(recyclerView, result, null, (ReactContext) context);
           recyclerView.setAdapter(dataAdaptor);
         }
       });

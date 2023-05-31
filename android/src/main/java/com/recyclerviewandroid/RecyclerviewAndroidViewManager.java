@@ -17,6 +17,7 @@ import com.facebook.react.views.scroll.ScrollEventType;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.recyclerviewandroid.libs.domain.Media;
+import com.recyclerviewandroid.libs.domain.SectionHeaderStyle;
 import com.recyclerviewandroid.libs.events.LongPressEvent;
 import com.recyclerviewandroid.libs.javascript.ReactSectionDataSource;
 import com.recyclerviewandroid.main.HomePage;
@@ -42,6 +43,8 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
   public static final String COMMAND_SCROLL_TO_INDEX = "toIndex";
   public static final String COMMAND_NOTIFY_ITEM_MOVED = "moved";
   private Object one;
+
+  private SectionHeaderStyle style;
   private ThemedReactContext context;
 
   @Override
@@ -80,8 +83,17 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
     Date now = new Date();
     Long tick  = now.getTime();
     //ObjectMapper mapper = new ObjectMapper();
+
     Log.i("setDataSourceString",String.format("%s-%s",tick,sources.size()));
-    new HomePage(view,this.context,this.context.getCurrentActivity()).setDataSourceMedia(sources);
+    new HomePage(view,this.context,this.context.getCurrentActivity()).setDataSourceMedia(sources,style);
+  }
+
+  @Override
+  @ReactProp(name = "sectionHeaderStyle")
+  public void setSectionHeaderStyle(RecyclerviewAndroidView view, @Nullable String headerStyle) {
+    Log.i("setSectionHeaderStyle",headerStyle);
+    Type sectionHeaderStyle = new TypeToken<SectionHeaderStyle>(){}.getType();
+    style = new Gson().fromJson(headerStyle,sectionHeaderStyle);
   }
 
   @Override
