@@ -22,8 +22,16 @@ export type SectionDataSource = {
     sectionTitle: string;
     data: Array<Asset>;
 };
+export type SectionHeaderStyle = {
+    BackgroudColor: string;
+    Padding: number;
+    FontSize: number;
+    FontColor: string;
+    FontWeight: number;
+};
 interface NativeProps extends ViewProps {
     color?: string;
+    sectionHeaderStyle?: string;
     dataSourceString?: string;
     dataSource?: Array<Asset>;
     onLongPressed: DirectEventHandler<OnPageSelectedEventData>;
