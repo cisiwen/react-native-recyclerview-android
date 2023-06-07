@@ -12,11 +12,14 @@ public class RNCollectionViewController:UICollectionViewController,UICollectionV
     
     public var onLongPressed:(String, Int) -> Void;
     private var data:[SectionData];
+    private var headerStyle:SectionHeaderStyleSwift;
+    
     @objc public init(frame:CGRect,onLongPress: @escaping (String, Int) -> Void) {
         let layout = UICollectionViewFlowLayout();
         layout.scrollDirection = .vertical;
         layout.estimatedItemSize = .zero;
         data=Array();
+        headerStyle = SectionHeaderStyleSwift();
         self.onLongPressed=onLongPress;
         super.init(collectionViewLayout: layout);
         layout.headerReferenceSize = CGSize(width: self.collectionView.frame.size.width, height: 20);
@@ -36,11 +39,14 @@ public class RNCollectionViewController:UICollectionViewController,UICollectionV
     public func getName()->String {
         return "Hello from swift";
     }
-    @objc public func setDataSourceString(dataSource: String)->Void{
+    @objc public func setDataSourceString(dataSource: String,headerStyleString:String)->Void{
         NSLog("Your name is %@TESTING%lu", self.getName(), Int(Date().timeIntervalSince1970*1000));
         let jsonDecoder = JSONDecoder();
         do {
             data = try jsonDecoder.decode([SectionData].self, from: dataSource.data(using: .utf8)!);
+            var rnHeaderStyle:SectionHeaderStyle = try jsonDecoder.decode(SectionHeaderStyle.self, from: headerStyleString.data(using: .utf8)!);
+            
+            headerStyle = SectionHeaderStyleSwift(style:rnHeaderStyle);
             
             var totalIndex = 0;
             var sectionIndex = 0;
@@ -150,6 +156,7 @@ public class RNCollectionViewController:UICollectionViewController,UICollectionV
             }
             let section = data[indexPath.section];
             headerView.setSectionHeader(section:section);
+            headerView.setSectionStyle(sectionStyle: headerStyle);
             return headerView;
             
         default:

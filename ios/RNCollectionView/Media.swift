@@ -36,3 +36,42 @@ class SectionData:Codable {
     public var data:Array<MediaItem>;
  
 }
+class SectionHeaderStyle:Codable {
+    public var BackgroudColor:String?;
+    public var Padding:CGFloat?;
+    public var FontSize:CGFloat?;
+    public var FontColor:String?;
+    public var FontWeight:CGFloat?;
+    
+    public required init() {
+        
+    }
+}
+
+class SectionHeaderStyleSwift{
+    public var BackgroudColor:UIColor?;
+    public var Padding:CGFloat?;
+    public var FontSize:CGFloat?;
+    public var FontColor:UIColor?;
+    public var FontWeight:CGFloat?;
+    
+    public required init(){}
+    public required init(style:SectionHeaderStyle) {
+        
+        if(style.BackgroudColor != nil){
+            self.BackgroudColor = UIColor(hexString: style.BackgroudColor!);
+        }
+        if(style.FontColor != nil){
+            self.FontColor = UIColor(hexString: style.FontColor!);
+        }
+        if(style.FontSize != nil){
+            self.FontSize=style.FontSize;
+        }
+        if(style.Padding != nil){
+            self.Padding=style.Padding;
+        }
+        if(style.FontWeight != nil){
+            self.FontWeight=style.FontWeight;
+        }
+    }
+}

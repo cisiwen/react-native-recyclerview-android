@@ -10,8 +10,9 @@ import React
 import SDWebImagePhotosPlugin
 import PhotosUI
 class GalleryListView:UIView {
-    @objc var onLongPressed:RCTDirectEventBlock? = nil
-    @objc var dataSourceString: NSString = ""
+    @objc var onLongPressed:RCTDirectEventBlock? = nil;
+    @objc var sectionHeaderStyle: NSString = "";
+    @objc var dataSourceString: NSString = "";
     private var rnCollectionViewController:RNCollectionViewController?;
     override init(frame:CGRect) {
         super.init(frame: frame);
@@ -28,18 +29,7 @@ class GalleryListView:UIView {
     }
     
     
-    func requestPermission(){
-        if #available(iOS 14, *) {
-            PHPhotoLibrary.requestAuthorization(for: .readWrite) { [unowned self] (status) in
-                DispatchQueue.main.async { [unowned self] in
-                    
-                }
-            }
-        } else {
-            // Fallback on earlier versions
-        }
-
-    }
+ 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -54,8 +44,9 @@ class GalleryListView:UIView {
             if(rnCollectionViewController == nil) {
                 addCollectionView();
             }
+            
             //requestPermission();
-            rnCollectionViewController?.setDataSourceString(dataSource: self.dataSourceString as String);
+            rnCollectionViewController?.setDataSourceString(dataSource: self.dataSourceString as String,headerStyleString: self.sectionHeaderStyle as String);
         }
         
     }

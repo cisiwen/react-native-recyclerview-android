@@ -26,9 +26,26 @@ class MediaListHeaderCellView:UICollectionReusableView {
 
     }
     
+    public func setSectionStyle(sectionStyle:SectionHeaderStyleSwift) {
+        //self.backgroundColor = //UIColor. sectionStyle.BackgroudColor;
+        self.backgroundColor=sectionStyle.BackgroudColor;
+        if(self.textView != nil){
+            self.textView.textColor = sectionStyle.FontColor;
+            self.textView.layoutMargins = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5);
+            //self.textView.font.pointSize=sectionStyle.FontSize;
+            if(sectionStyle.FontSize != nil || sectionStyle.FontWeight != nil){
+                var size:CGFloat = sectionStyle.FontSize ?? self.textView.font.pointSize;
+                var weight  = sectionStyle.FontWeight! > 500 ? UIFont.Weight.bold : UIFont.Weight.light;
+                var font:UIFont = UIFont.systemFont(ofSize: size, weight: weight);
+                self.textView.font = font;
+            }
+        }
+    }
+    
     public func setSectionHeader(section:SectionData) {
         if(self.textView==nil) {
             self.textView=UILabel(frame: self.frame);
+            
             self.addSubview(self.textView);
         }
         self.backgroundColor=UIColor.red;

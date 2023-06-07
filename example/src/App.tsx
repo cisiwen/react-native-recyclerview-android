@@ -52,9 +52,9 @@ export default function App() {
   const dataSourceString = JSON.stringify(sections);
   console.log('json.stringfy', now, new Date().getTime().toString());
   const sectionHeaderStyle:SectionHeaderStyle = {
-    BackgroudColor: '#565656',
+    BackgroudColor: '#000',
     FontSize: 20,
-    FontWeight: 900,
+    FontWeight: 600,
     FontColor: '#ffffff',
     Padding: 10
   }
