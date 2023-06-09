@@ -63,6 +63,7 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
     } else {
       v = LayoutInflater.from(parent.getContext())
         .inflate(R.layout.photo_list_item, parent, false);
+      v.setPadding(2,2,2,2);
     }
     return new ViewHolder(v, parent.getContext(), this);
   }
@@ -73,7 +74,7 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
         view.setBackgroundColor(Color.parseColor(style.BackgroudColor));
       }
       if (style.Padding > -1) {
-        view.setPadding(style.Padding, style.Padding, style.Padding, style.Padding);
+        //view.setPadding(style.Padding, style.Padding, style.Padding, style.Padding);
       }
       if (style.FontSize > 0 || style.FontWeight > 0) {
         TextView textView = view.findViewById(R.id.header_title);

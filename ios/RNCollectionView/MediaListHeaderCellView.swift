@@ -29,13 +29,17 @@ class MediaListHeaderCellView:UICollectionReusableView {
     public func setSectionStyle(sectionStyle:SectionHeaderStyleSwift) {
         //self.backgroundColor = //UIColor. sectionStyle.BackgroudColor;
         self.backgroundColor=sectionStyle.BackgroudColor;
+        if(sectionStyle.Padding != nil){
+            
+        }
         if(self.textView != nil){
             self.textView.textColor = sectionStyle.FontColor;
-            self.textView.layoutMargins = UIEdgeInsets(top: 5, left: 5, bottom: 5, right: 5);
+            //self.textView.layoutMargins = UIEdgeInsets(top: 5, left: 125, bottom: 5, right: 105);
             //self.textView.font.pointSize=sectionStyle.FontSize;
+            self.textView.bounds =  CGRectInset(self.frame, sectionStyle.Padding!, sectionStyle.Padding!);
             if(sectionStyle.FontSize != nil || sectionStyle.FontWeight != nil){
                 var size:CGFloat = sectionStyle.FontSize ?? self.textView.font.pointSize;
-                var weight  = sectionStyle.FontWeight! > 500 ? UIFont.Weight.bold : UIFont.Weight.light;
+                var weight  = sectionStyle.FontWeight! > 500 ? UIFont.Weight.semibold : UIFont.Weight.light;
                 var font:UIFont = UIFont.systemFont(ofSize: size, weight: weight);
                 self.textView.font = font;
             }
