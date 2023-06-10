@@ -37,12 +37,6 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
 
   public static final String NAME = "GalleryListView";
 
-  public static final String COMMAND_NOTIFY_ITEM_RANGE_INSERTED = "inserted";
-  public static final String COMMAND_NOTIFY_ITEM_RANGE_REMOVED = "removed";
-  public static final String COMMAND_NOTIFY_DATASET_CHANGED = "changed";
-  public static final String COMMAND_SCROLL_TO_INDEX = "toIndex";
-  public static final String COMMAND_NOTIFY_ITEM_MOVED = "moved";
-  private Object one;
 
   private SectionHeaderStyle style;
   private ThemedReactContext context;

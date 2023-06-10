@@ -16,6 +16,7 @@ import android.util.Size;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -119,7 +120,7 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
 
   @Override
   public void onItemLongPressed(int position) {
-    EventDispatcher.sendItemOnLongPress(this.reactContext, view.getId());
+    //EventDispatcher.sendItemOnLongPress(this.reactContext, view.getId());
   }
 
   @Override
@@ -135,7 +136,8 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
 
 
     ImageView imageView = null;
-    TextView headerTextView =null;
+    TextView headerTextView = null;
+    CheckBox checkBox = null;
     BitmapFactory.Options options;
     Context context;
     GalleryListRecylerviewDataAdaptor adaptor;
@@ -145,6 +147,7 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
       this.adaptor = adapter;
       imageView = itemView.findViewById(R.id.list_item_imageview);
       headerTextView = itemView.findViewById(R.id.header_title);
+      checkBox = itemView.findViewById(R.id.list_item_checkbox);
       options = new BitmapFactory.Options();
 
       if (itemView != null) {
@@ -228,21 +231,15 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
     public void setData(Asset asset) throws IOException {
 
       if(imageView!=null) {
+        imageView.setZ(0);
         Glide.with(this.context).load(asset.image.imageUri.toString()).into(imageView);
+        checkBox.bringToFront();
       }
       else if(asset.type=="Header"){
 
           headerTextView.setText(asset.group_name);
       }
-          /*
-            new LoadLocalMediaStoreDataTask(asset,this.context, new Callback(){
 
-              @Override
-              public void onResult(Bitmap result) {
-                imageView.setImageBitmap(result);
-              }
-            }).execute();
-            */
     }
   }
 }

@@ -12,6 +12,8 @@
     android:layout_width="match_parent"
     android:layout_height="0dp"
     android:layout_margin="0dp"
+    android:layout_marginStart="120dp"
+    android:layout_marginTop="16dp"
     android:background="@color/grey"
     android:scaleType="centerCrop"
     app:layout_constraintDimensionRatio="1:1"
@@ -19,13 +21,12 @@
     app:layout_constraintTop_toTopOf="parent"></ImageView>
 
   <CheckBox
+    android:id="@+id/list_item_checkbox"
     android:layout_width="64dp"
     android:layout_height="54dp"
     android:layout_marginEnd="2dp"
     android:layout_marginBottom="2dp"
     android:gravity="top"
-    app:layout_constraintBottom_toTopOf="@+id/list_item_imageview"
-    app:layout_constraintEnd_toStartOf="@+id/list_item_imageview"
     app:layout_constraintHorizontal_bias="0.0"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"
