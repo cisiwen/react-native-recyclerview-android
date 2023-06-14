@@ -22,4 +22,13 @@ public class EventDispatcher {
       new LongPressEvent(viewTag)
     );
   }
+
+  public  static void sendItemOnPress(ReactContext reactContext,int viewTag){
+    //reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(ON_ITEM_LONG_PRESS,"TESTING");
+
+    //reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(3, "longPressed", event);
+    UIManagerHelper.getEventDispatcherForReactTag(reactContext, viewTag).dispatchEvent(
+      new OnPressEvent(viewTag)
+    );
+  }
 }

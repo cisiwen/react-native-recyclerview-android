@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -33,6 +34,8 @@ import com.recyclerviewandroid.libs.domain.SectionHeaderStyle;
 import com.recyclerviewandroid.libs.events.EventDispatcher;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<GalleryListRecylerviewDataAdaptor.ViewHolder> implements EventDispatcher.OnItemLongPressListener {
@@ -43,6 +46,8 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
 
   private SectionHeaderStyle headerStyle;
 
+  private List<ViewHolder> visibleItems;
+  private boolean isSelectionMode;
   ReactContext reactContext;
   View view;
   public GalleryListRecylerviewDataAdaptor(View view,GetPhotoOutput photos, SectionHeaderStyle headerStyle, ReactContext reactContext) {
@@ -96,8 +101,10 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
     }
   }
 
+
   @Override
   public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    Log.println(Log.INFO,"onBindViewHolder", String.valueOf(position));
     try {
       holder.setData(this.photos.assets.get(position));
     } catch (IOException e) {
@@ -120,7 +127,40 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
 
   @Override
   public void onItemLongPressed(int position) {
-    //EventDispatcher.sendItemOnLongPress(this.reactContext, view.getId());
+    toggleSelectionMode();
+    EventDispatcher.sendItemOnLongPress(this.reactContext, view.getId());
+  }
+
+  public  void  onItemPressed(int position) {
+    EventDispatcher.sendItemOnPress(this.reactContext, view.getId());
+  }
+
+
+  private  void toggleSelectionMode() {
+    this.isSelectionMode = !this.isSelectionMode;
+    for (int i = 0; i < this.photos.assets.size(); i++) {
+      this.photos.assets.get(i).isSelectionMode = this.isSelectionMode;
+    }
+    if (this.visibleItems != null) {
+      for (int i = 0; i < this.visibleItems.size(); i++) {
+        this.visibleItems.get(i).toggleSelectionMode(this.isSelectionMode);
+      }
+    }
+  }
+
+  @Override
+  public void onViewAttachedToWindow(ViewHolder viewHolder){
+    if(this.visibleItems == null){
+      this.visibleItems = new ArrayList<ViewHolder>();
+    }
+    this.visibleItems.add(viewHolder);
+  }
+  @Override
+  public void  onViewDetachedFromWindow(ViewHolder viewHolder) {
+    int index = this.visibleItems.indexOf(viewHolder);
+    if(index>-1){
+      this.visibleItems.remove(index);
+    }
   }
 
   @Override
@@ -138,9 +178,16 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
     ImageView imageView = null;
     TextView headerTextView = null;
     CheckBox checkBox = null;
+    RelativeLayout controlContainer;
     BitmapFactory.Options options;
     Context context;
     GalleryListRecylerviewDataAdaptor adaptor;
+
+    Boolean isInSelectionMode = false;
+
+
+
+
 
     public ViewHolder(@NonNull View itemView, Context context, GalleryListRecylerviewDataAdaptor adapter) {
       super(itemView);
@@ -148,6 +195,7 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
       imageView = itemView.findViewById(R.id.list_item_imageview);
       headerTextView = itemView.findViewById(R.id.header_title);
       checkBox = itemView.findViewById(R.id.list_item_checkbox);
+      controlContainer = itemView.findViewById(R.id.list_item_control_container);
       options = new BitmapFactory.Options();
 
       if (itemView != null) {
@@ -159,6 +207,13 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
             Log.i("REPRESSION", "Triggered");
             adapter.onItemLongPressed(getAbsoluteAdapterPosition());
             return true;
+          }
+        });
+
+        itemView.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+              adapter.onItemPressed(getAbsoluteAdapterPosition());
           }
         });
         this.context = context;
@@ -228,12 +283,19 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
       }
     }
 
+    public  void toggleSelectionMode(boolean visible) {
+      if (controlContainer != null && visible != this.isInSelectionMode) {
+        controlContainer.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
+        this.isInSelectionMode = visible;
+      }
+    }
     public void setData(Asset asset) throws IOException {
 
+      toggleSelectionMode(asset.isSelectionMode);
       if(imageView!=null) {
         imageView.setZ(0);
         Glide.with(this.context).load(asset.image.imageUri.toString()).into(imageView);
-        checkBox.bringToFront();
+
       }
       else if(asset.type=="Header"){
 

@@ -9,4 +9,7 @@ public class Asset {
     public  Long modified;
 
     public  Location location;
+
+    public  boolean selected;
+    public  boolean isSelectionMode;
 }

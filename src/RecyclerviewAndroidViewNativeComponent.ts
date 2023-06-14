@@ -38,6 +38,7 @@ interface NativeProps extends ViewProps {
   dataSourceString?: string;
   dataSource?: Array<Asset>;
   onLongPressed: DirectEventHandler<OnPageSelectedEventData>;
+  onItemPressed: DirectEventHandler<OnPageSelectedEventData>;
 }
 
 export default codegenNativeComponent<NativeProps>("GalleryListView");

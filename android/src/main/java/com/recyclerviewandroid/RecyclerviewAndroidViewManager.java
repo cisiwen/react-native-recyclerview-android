@@ -19,6 +19,7 @@ import com.google.gson.reflect.TypeToken;
 import com.recyclerviewandroid.libs.domain.Media;
 import com.recyclerviewandroid.libs.domain.SectionHeaderStyle;
 import com.recyclerviewandroid.libs.events.LongPressEvent;
+import com.recyclerviewandroid.libs.events.OnPressEvent;
 import com.recyclerviewandroid.libs.javascript.ReactSectionDataSource;
 import com.recyclerviewandroid.main.HomePage;
 
@@ -94,6 +95,8 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
   public  Map getExportedCustomDirectEventTypeConstants(){
     return MapBuilder.builder().put(
       LongPressEvent.EVENT_NAME, MapBuilder.of("registrationName","onLongPressed")
+    ).put(
+      OnPressEvent.EVENT_NAME, MapBuilder.of("registrationName","onItemPressed")
     ).build();
   }
 

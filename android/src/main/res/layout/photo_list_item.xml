@@ -20,15 +20,26 @@
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintTop_toTopOf="parent"></ImageView>
 
-  <CheckBox
-    android:id="@+id/list_item_checkbox"
-    android:layout_width="64dp"
-    android:layout_height="54dp"
-    android:layout_marginEnd="2dp"
-    android:layout_marginBottom="2dp"
-    android:gravity="top"
-    app:layout_constraintHorizontal_bias="0.0"
+  <RelativeLayout
+    android:visibility="invisible"
+    android:id="@+id/list_item_control_container"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintVertical_bias="0.0"></CheckBox>
+    app:layout_constraintTop_toTopOf="parent">
+
+    <CheckBox
+      android:id="@+id/list_item_checkbox"
+      android:layout_width="64dp"
+      android:layout_height="54dp"
+      android:layout_marginEnd="2dp"
+      android:layout_marginBottom="2dp"
+      android:gravity="top"
+      app:layout_constraintHorizontal_bias="0.0"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintVertical_bias="0.0">
+
+    </CheckBox>
+  </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -47,6 +47,9 @@ export default function App() {
   const onLongPressed = (e: PagerViewOnPageSelectedEvent) => {
     console.log('onLongPressed', e.nativeEvent);
   };
+  const onItemPressed=(e:PagerViewOnPageSelectedEvent)=>{
+    console.log('onItemPressed', e.nativeEvent);
+  }
   console.log(now, new Date().getTime().toString());
   now = new Date().getTime().toString();
   const dataSourceString = JSON.stringify(sections);
@@ -65,6 +68,7 @@ export default function App() {
          sectionHeaderStyle={JSON
           .stringify(sectionHeaderStyle)}
         onLongPressed={onLongPressed}
+        onItemPressed={onItemPressed}
         dataSourceString={dataSourceString}
         color="#32a852"
         style={styles.box}
