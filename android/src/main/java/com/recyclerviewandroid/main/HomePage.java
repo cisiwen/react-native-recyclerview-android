@@ -87,6 +87,9 @@ public class HomePage {
       header.type = "Header";
       header.group_name = temp.sectionTitle;
       header.group_id = new Long(id);
+      header.originalSection = new ReactSectionDataSource();
+      header.originalSection.sectionId = temp.sectionId;
+      header.originalSection.sectionTitle = temp.sectionTitle;
       result.assets.add(header);
 
 
@@ -97,6 +100,7 @@ public class HomePage {
         oneMedia.image = new Image();
         oneMedia.image.imageId = new Long(id);
         oneMedia.image.imageUri = Uri.parse(asset.uri);
+        oneMedia.originalAsset = asset;
         //oneMedia.image.imageId= asset.contentId;
         result.assets.add(oneMedia);
       }

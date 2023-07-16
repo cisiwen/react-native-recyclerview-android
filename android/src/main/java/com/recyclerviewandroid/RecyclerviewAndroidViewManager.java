@@ -19,6 +19,7 @@ import com.google.gson.reflect.TypeToken;
 import com.recyclerviewandroid.libs.domain.Media;
 import com.recyclerviewandroid.libs.domain.SectionHeaderStyle;
 import com.recyclerviewandroid.libs.events.LongPressEvent;
+import com.recyclerviewandroid.libs.events.OnItemSelectStateChangedEvent;
 import com.recyclerviewandroid.libs.events.OnPressEvent;
 import com.recyclerviewandroid.libs.javascript.ReactSectionDataSource;
 import com.recyclerviewandroid.main.HomePage;
@@ -64,40 +65,42 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
   @ReactProp(name = "dataSource")
   public void setDataSource(RecyclerviewAndroidView view, @Nullable ReadableArray dataSource) {
     Date now = new Date();
-    Long tick  = now.getTime();
+    Long tick = now.getTime();
     Object one = dataSource.toArrayList().get(0);
-    Log.i("setDataSource",String.format("%s-%s",tick,one.toString()));
-    new HomePage(view,this.context,this.context.getCurrentActivity()).loadGallery();
+    Log.i("setDataSource", String.format("%s-%s", tick, one.toString()));
+    new HomePage(view, this.context, this.context.getCurrentActivity()).loadGallery();
   }
 
   @Override
   @ReactProp(name = "dataSourceString")
-  public  void setDataSourceString(RecyclerviewAndroidView view, @Nullable String dataSource) {
-    Type listmedia = new TypeToken<List<ReactSectionDataSource>>(){}.getType();
-    List<ReactSectionDataSource> sources= new Gson().fromJson(dataSource,listmedia);
+  public void setDataSourceString(RecyclerviewAndroidView view, @Nullable String dataSource) {
+    Type listmedia = new TypeToken<List<ReactSectionDataSource>>() {
+    }.getType();
+    List<ReactSectionDataSource> sources = new Gson().fromJson(dataSource, listmedia);
     Date now = new Date();
-    Long tick  = now.getTime();
+    Long tick = now.getTime();
     //ObjectMapper mapper = new ObjectMapper();
 
-    Log.i("setDataSourceString",String.format("%s-%s",tick,sources.size()));
-    new HomePage(view,this.context,this.context.getCurrentActivity()).setDataSourceMedia(sources,style);
+    Log.i("setDataSourceString", String.format("%s-%s", tick, sources.size()));
+    new HomePage(view, this.context, this.context.getCurrentActivity()).setDataSourceMedia(sources, style);
   }
 
   @Override
   @ReactProp(name = "sectionHeaderStyle")
   public void setSectionHeaderStyle(RecyclerviewAndroidView view, @Nullable String headerStyle) {
-    Log.i("setSectionHeaderStyle",headerStyle);
-    Type sectionHeaderStyle = new TypeToken<SectionHeaderStyle>(){}.getType();
-    style = new Gson().fromJson(headerStyle,sectionHeaderStyle);
+    Log.i("setSectionHeaderStyle", headerStyle);
+    Type sectionHeaderStyle = new TypeToken<SectionHeaderStyle>() {
+    }.getType();
+    style = new Gson().fromJson(headerStyle, sectionHeaderStyle);
   }
 
   @Override
-  public  Map getExportedCustomDirectEventTypeConstants(){
+  public Map getExportedCustomDirectEventTypeConstants() {
     return MapBuilder.builder().put(
-      LongPressEvent.EVENT_NAME, MapBuilder.of("registrationName","onLongPressed")
+      LongPressEvent.EVENT_NAME, MapBuilder.of("registrationName", "onLongPressed")
     ).put(
-      OnPressEvent.EVENT_NAME, MapBuilder.of("registrationName","onItemPressed")
-    ).build();
+      OnPressEvent.EVENT_NAME, MapBuilder.of("registrationName", "onItemPressed")
+    ).put(OnItemSelectStateChangedEvent.EVENT_NAME, MapBuilder.of("registrationName", "OnItemSelectStateChanged")).build();
   }
 
 

@@ -6,14 +6,18 @@ import com.facebook.react.uimanager.events.Event;
 import com.google.gson.Gson;
 import com.recyclerviewandroid.libs.domain.Asset;
 
-public class LongPressEvent extends Event<LongPressEvent> {
-
-  public static final String EVENT_NAME = "topLongPressed";
+public class OnItemSelectStateChangedEvent extends Event<OnItemSelectStateChangedEvent> {
 
   private Asset asset;
-  public LongPressEvent(int viewTag, Asset asset) {
+
+  public  OnItemSelectStateChangedEvent(int viewTag,Asset asset) {
     super(viewTag);
     this.asset = asset;
+  }
+  public static final String EVENT_NAME = "topItemSelectStateChanged";
+  @Override
+  public String getEventName() {
+    return EVENT_NAME;
   }
 
   @Override
@@ -25,9 +29,5 @@ public class LongPressEvent extends Event<LongPressEvent> {
     String  data = new Gson().toJson(asset);
     event.putString("data",data);
     return event;
-  }
-  @Override
-  public String getEventName() {
-    return EVENT_NAME;
   }
 }

@@ -10,26 +10,29 @@ import Foundation
 public class RNCollectionViewController:UICollectionViewController,UICollectionViewDelegateFlowLayout,UIGestureRecognizerDelegate {
     
     
-    public var onLongPressed:(String, Int) -> Void;
+    public var onLongPressed:(String, String) -> Void;
+    public var onItemPressed:(String, String) -> Void;
     private var data:[SectionData];
     private var headerStyle:SectionHeaderStyleSwift;
     
-    @objc public init(frame:CGRect,onLongPress: @escaping (String, Int) -> Void) {
+    public init(frame:CGRect,onLongPress: @escaping (String, String) -> Void,onItemPressed:@escaping (String, String) -> Void) {
         let layout = UICollectionViewFlowLayout();
         layout.scrollDirection = .vertical;
         layout.estimatedItemSize = .zero;
         data=Array();
         headerStyle = SectionHeaderStyleSwift();
         self.onLongPressed=onLongPress;
+        self.onItemPressed = onItemPressed;
         super.init(collectionViewLayout: layout);
         layout.headerReferenceSize = CGSize(width: self.collectionView.frame.size.width, height: 20);
         collectionView.frame = frame;
         collectionView.register(MediaItemCellView.self, forCellWithReuseIdentifier: "\(MediaItemCellView.self)");
         collectionView.register(MediaListHeaderCellView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "\(MediaListHeaderCellView.self)")
         setupLongGestureRecognizerOnCollection();
+        setupOnPressGestureRecognizerOnCollection();
         
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -61,7 +64,7 @@ public class RNCollectionViewController:UICollectionViewController,UICollectionV
                 }
                 sectionIndex+=1;
             }
-             
+            
             print("sources has ",data.count, Int(Date().timeIntervalSince1970*1000));
             
             //self.collectionView.reloadData();
@@ -116,11 +119,49 @@ public class RNCollectionViewController:UICollectionViewController,UICollectionV
         if let index = indexPath{
             print(index.row);
             toggleSelectionMode();
-            onLongPressed("testing",index.row);
+            let jsonEncoder = JSONEncoder();
+            do {
+                let asset = data[index.section].data[index.row];
+                let callbackAsset = CallbackAsset(asset: asset);
+                let jsonData = try jsonEncoder.encode(callbackAsset)
+                let jsonString = String(data: jsonData, encoding: .utf8)
+                onLongPressed("testing",jsonString!);
+            }catch{
+                fatalError("handleLongPress error")
+            }
         }
         else{
             print("Could not find index path")
         }
+    }
+    
+    @objc func handleTappedEvent(gesture:UITapGestureRecognizer) {
+        let state = gesture.state;
+        guard gesture.state == .ended else { return }
+        let point = gesture.location(in: self.collectionView)
+        let indexPath = self.collectionView.indexPathForItem(at: point)
+        if let index = indexPath{
+            let item = index.section;
+            print(index.row,index.section);
+            let asset = data[index.section].data[index.row];
+            let jsonEncoder = JSONEncoder();
+            do {
+                let callbackAsset = CallbackAsset(asset: asset);
+                let jsonData = try jsonEncoder.encode(callbackAsset)
+                let jsonString = String(data: jsonData, encoding: .utf8)
+                onItemPressed("testing",jsonString!);
+            }catch{
+                fatalError("could not json encode")
+            }
+        }
+        else{
+            print("Could not find index path")
+        }
+    }
+    
+    private func setupOnPressGestureRecognizerOnCollection(){
+        let tapEvent = UITapGestureRecognizer(target: self, action: #selector(handleTappedEvent));
+        self.collectionView.addGestureRecognizer(tapEvent);
     }
     
     private func setupLongGestureRecognizerOnCollection() {
@@ -160,7 +201,7 @@ public class RNCollectionViewController:UICollectionViewController,UICollectionV
             return headerView;
             
         default:
-            assert(false, "Invalid element type")
+            fatalError("Invalid element type");
         }
     }
     
@@ -203,17 +244,17 @@ public class RNCollectionViewController:UICollectionViewController,UICollectionV
             // You can also update any other properties of the cell, such as its content
         }
         /*
-        var start = collectionView.visibleCells.first as! MediaItemCellView;
-        var end = collectionView.visibleCells.last as! MediaItemCellView;
-        if(start.mediaItem != nil){
-            var index = start.mediaItem?.totalIndex;
-            for i in stride(from: index!, to: index!-50, by:-1) {
-                if(i > -1){
-                    
-                }
-            }
-            
-        }
+         var start = collectionView.visibleCells.first as! MediaItemCellView;
+         var end = collectionView.visibleCells.last as! MediaItemCellView;
+         if(start.mediaItem != nil){
+         var index = start.mediaItem?.totalIndex;
+         for i in stride(from: index!, to: index!-50, by:-1) {
+         if(i > -1){
+         
+         }
+         }
+         
+         }
          */
     }
     

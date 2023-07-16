@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -126,14 +127,21 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
   }
 
   @Override
-  public void onItemLongPressed(int position) {
+  public void onItemLongPressed( Asset asset) {
     toggleSelectionMode();
-    EventDispatcher.sendItemOnLongPress(this.reactContext, view.getId());
+
+    EventDispatcher.sendItemOnLongPress(this.reactContext, view.getId(),asset);
   }
 
-  public  void  onItemPressed(int position) {
-    EventDispatcher.sendItemOnPress(this.reactContext, view.getId());
+  public  void  onItemPressed( Asset asset) {
+    EventDispatcher.sendItemOnPress(this.reactContext, view.getId(), asset);
   }
+
+  public void onSingleItemSelectChanged(boolean selected, Asset asset) {
+    asset.selected = selected;
+    EventDispatcher.sendSingleItemSelectChanged(this.reactContext, view.getId(), asset);
+  }
+
 
 
   private  void toggleSelectionMode() {
@@ -185,7 +193,7 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
 
     Boolean isInSelectionMode = false;
 
-
+    Asset asset = null;
 
 
 
@@ -205,7 +213,7 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
             // Call the onItemLongPressed() method of the adapter
 
             Log.i("REPRESSION", "Triggered");
-            adapter.onItemLongPressed(getAbsoluteAdapterPosition());
+            adapter.onItemLongPressed(asset);
             return true;
           }
         });
@@ -213,11 +221,20 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
         itemView.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View view) {
-              adapter.onItemPressed(getAbsoluteAdapterPosition());
+
+            adapter.onItemPressed(asset);
           }
         });
         this.context = context;
         //options.inSampleSize=true
+      }
+      if (checkBox != null) {
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+          @Override
+          public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            adapter.onSingleItemSelectChanged(b, asset);
+          }
+        });
       }
     }
 
@@ -291,6 +308,7 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
     }
     public void setData(Asset asset) throws IOException {
 
+      this.asset = asset;
       toggleSelectionMode(asset.isSelectionMode);
       if(imageView!=null) {
         imageView.setZ(0);

@@ -35,6 +35,8 @@ interface NativeProps extends ViewProps {
     dataSourceString?: string;
     dataSource?: Array<Asset>;
     onLongPressed: DirectEventHandler<OnPageSelectedEventData>;
+    onItemPressed: DirectEventHandler<OnPageSelectedEventData>;
+    OnItemSelectStateChanged: DirectEventHandler<OnPageSelectedEventData>;
 }
 declare const _default: import("react-native/Libraries/Utilities/codegenNativeComponent").NativeComponentType<NativeProps>;
 export default _default;

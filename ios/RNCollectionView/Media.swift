@@ -6,15 +6,15 @@
 //
 
 import Foundation
-class MediaType:Codable {
+public class MediaType:Codable {
     public static let VIDEO:String = "VIDEO";
     public static let IMAGE:String="IMAGE";
     public static let HEADER:String="HEADER";
 }
-class MediaItemUIState:Codable{
+public class MediaItemUIState:Codable{
     public var selected:Bool;
 }
-class MediaItem:Codable{
+public class MediaItem:Codable{
     public var contentId:String!;
     public var uri: String!;
     public var width: String!;
@@ -29,14 +29,14 @@ class MediaItem:Codable{
     public var mediaItemCellView:MediaItemCellView?
 }
 
-class SectionData:Codable {
+public class SectionData:Codable {
     public var sectionTitle:String;
     public var sectionId:String;
     public var mediaItemUIState:MediaItemUIState!;
     public var data:Array<MediaItem>;
  
 }
-class SectionHeaderStyle:Codable {
+public class SectionHeaderStyle:Codable {
     public var BackgroudColor:String?;
     public var Padding:CGFloat?;
     public var FontSize:CGFloat?;
@@ -48,7 +48,14 @@ class SectionHeaderStyle:Codable {
     }
 }
 
-class SectionHeaderStyleSwift{
+public class CallbackAsset:Codable {
+    public var  originalAsset:MediaItem;
+    init(asset:MediaItem) {
+        self.originalAsset = asset;
+    }
+}
+
+public class SectionHeaderStyleSwift{
     public var BackgroudColor:UIColor?;
     public var Padding:CGFloat?;
     public var FontSize:CGFloat?;

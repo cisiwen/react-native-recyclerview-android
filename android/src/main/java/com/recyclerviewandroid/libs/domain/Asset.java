@@ -1,5 +1,8 @@
 package com.recyclerviewandroid.libs.domain;
 
+import com.recyclerviewandroid.libs.javascript.ReactAsset;
+import com.recyclerviewandroid.libs.javascript.ReactSectionDataSource;
+
 public class Asset {
     public  Image image;
     public  String type;
@@ -12,4 +15,8 @@ public class Asset {
 
     public  boolean selected;
     public  boolean isSelectionMode;
+
+    public ReactSectionDataSource originalSection;
+
+    public ReactAsset originalAsset;
 }

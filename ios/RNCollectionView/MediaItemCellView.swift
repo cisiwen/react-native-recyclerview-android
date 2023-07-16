@@ -8,7 +8,7 @@
 import SDWebImagePhotosPlugin
 import Foundation
 import M13Checkbox
-class MediaItemCellView:UICollectionViewCell {
+public class MediaItemCellView:UICollectionViewCell {
     private var imageView: UIImageView!
     public var checkbox:M13Checkbox!;
     public var indexPath:IndexPath?;

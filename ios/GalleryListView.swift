@@ -4,13 +4,13 @@
 //
 //  Created by wweng on 20/5/2023.
 //
-
 import Foundation
 import React
 import SDWebImagePhotosPlugin
 import PhotosUI
 class GalleryListView:UIView {
     @objc var onLongPressed:RCTDirectEventBlock? = nil;
+    @objc var onItemPressed:RCTDirectEventBlock? = nil;
     @objc var sectionHeaderStyle: NSString = "";
     @objc var dataSourceString: NSString = "";
     private var rnCollectionViewController:RNCollectionViewController?;
@@ -34,8 +34,12 @@ class GalleryListView:UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func callback(name:String, index:Int) -> Void{
-        onLongPressed!(["message": "I am finished", "foo": "bar"]);
+    func callback(name:String, asset:String) -> Void{
+        onLongPressed!(["data": asset]);
+    }
+    
+    func onItemTapped(name:String, asset:String) -> Void{
+        onItemPressed!(["data": asset]);
     }
     
     
@@ -55,7 +59,7 @@ class GalleryListView:UIView {
     
     func addCollectionView(){
         let aRect = CGRectMake(0, 0, 100, 100);
-        rnCollectionViewController=RNCollectionViewController(frame: aRect, onLongPress:callback);
+        rnCollectionViewController=RNCollectionViewController(frame: aRect, onLongPress:callback,onItemPressed: onItemTapped);
         if(rnCollectionViewController != nil){
             self.addSubview((rnCollectionViewController?.collectionView)!);
         }

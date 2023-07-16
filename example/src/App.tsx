@@ -6,7 +6,8 @@ import {
   RecyclerviewAndroidView,
   SectionDataSource,
   SectionHeaderStyle,
-} from 'react-native-recyclerview-android';
+} from '@cisiwen/react-native-recyclerview-android';
+ 
 
 export default function App() {
   let now = new Date().getTime().toString();
@@ -50,6 +51,9 @@ export default function App() {
   const onItemPressed=(e:PagerViewOnPageSelectedEvent)=>{
     console.log('onItemPressed', e.nativeEvent);
   }
+  const onItemSelectStateChanged=(e:PagerViewOnPageSelectedEvent)=>{
+    console.log('onItemSelectStateChanged', e.nativeEvent);
+  }
   console.log(now, new Date().getTime().toString());
   now = new Date().getTime().toString();
   const dataSourceString = JSON.stringify(sections);
@@ -64,15 +68,19 @@ export default function App() {
   
   return (
     <View style={styles.container}>
+      
+      { 7>3 ?
       <RecyclerviewAndroidView
          sectionHeaderStyle={JSON
           .stringify(sectionHeaderStyle)}
         onLongPressed={onLongPressed}
         onItemPressed={onItemPressed}
+        OnItemSelectStateChanged={onItemSelectStateChanged}
         dataSourceString={dataSourceString}
         color="#32a852"
         style={styles.box}
-      />
+      />:null
+         }
     </View>
   );
 }
@@ -83,7 +91,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffcc00',
   },
   box: {
-    flex: 1,
+    flex:1,
     overflow: 'hidden',
     backgroundColor: 'green',
     margin: 0,
