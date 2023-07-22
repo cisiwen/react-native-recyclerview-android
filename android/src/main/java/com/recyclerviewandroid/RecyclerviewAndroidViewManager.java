@@ -24,12 +24,7 @@ import com.recyclerviewandroid.libs.events.OnPressEvent;
 import com.recyclerviewandroid.libs.javascript.ReactSectionDataSource;
 import com.recyclerviewandroid.main.HomePage;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.lang.reflect.Type;
-import java.security.PublicKey;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +34,7 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
 
   public static final String NAME = "GalleryListView";
 
+  public  String CMD_TOGGLE_SELECTION_MODE="CMD_TOGGLE_SELECTION_MODE";
 
   private SectionHeaderStyle style;
   private ThemedReactContext context;
@@ -103,5 +99,15 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
     ).put(OnItemSelectStateChangedEvent.EVENT_NAME, MapBuilder.of("registrationName", "OnItemSelectStateChanged")).build();
   }
 
+  @Override
+  public Map getCommandsMap() {
+    return MapBuilder.of(
+      "toggleSelectionMode", CMD_TOGGLE_SELECTION_MODE
+    );
+  }
+  @Override
+  public void receiveCommand(final RecyclerviewAndroidView parent, String commandType, @Nullable ReadableArray args) {
+    Log.i("receiveCommand",commandType);
+  }
 
 }

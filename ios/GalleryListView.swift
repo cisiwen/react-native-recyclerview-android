@@ -29,7 +29,7 @@ class GalleryListView:UIView {
     }
     
     
- 
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -42,6 +42,10 @@ class GalleryListView:UIView {
         onItemPressed!(["data": asset]);
     }
     
+    
+    @objc func toggleSelectionMode(_ selectionMode:Bool)-> Void {
+        print(selectionMode);
+    }
     
     override func didSetProps(_ changedProps: [String]!) {
         if(changedProps.contains("dataSourceString")){

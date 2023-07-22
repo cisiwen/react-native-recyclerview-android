@@ -18,4 +18,8 @@ class GalleryListViewManager:RCTViewManager  {
     override static func requiresMainQueueSetup() -> Bool {
         return true
     }
+   
+    @objc public func toggleSelectionMode(_ rectTag:NSNumber,selectionMode:Bool)-> Void {
+        print("toggleSelectionMode");
+    }
 }

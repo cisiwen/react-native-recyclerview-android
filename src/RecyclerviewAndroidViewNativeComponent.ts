@@ -1,7 +1,8 @@
 import codegenNativeComponent from "react-native/Libraries/Utilities/codegenNativeComponent";
-import type { ViewProps } from "react-native";
+import type { HostComponent, ViewProps } from "react-native";
 import type * as ReactNative from 'react-native';
 import type { DirectEventHandler, Int32 } from "react-native/Libraries/Types/CodegenTypes";
+import codegenNativeCommands from "react-native/Libraries/Utilities/codegenNativeCommands";
 type OnPageSelectedEventData = Readonly<{
   position: Int32;
 }>;
@@ -42,5 +43,23 @@ interface NativeProps extends ViewProps {
   OnItemSelectStateChanged: DirectEventHandler<OnPageSelectedEventData>;
 }
 
-export default codegenNativeComponent<NativeProps>("GalleryListView");
+
+const RecyclerviewAndroidView = codegenNativeComponent<NativeProps>("GalleryListView") as HostComponent<NativeProps>;;
+export default RecyclerviewAndroidView
+
+type RecyclerviewAndroidViewType = ReactNative.HostComponent<NativeProps>;
+
+export interface NativeCommands {
+  toggleSelectionMode: (
+    viewRef: React.ElementRef<RecyclerviewAndroidViewType>,
+    selectionMode: boolean
+  ) => void;
+}
+
+
+export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
+  supportedCommands: [
+    'toggleSelectionMode' 
+  ],
+});
 //export const ZoomableImageView = codegenNativeComponent<NativeProps>("ZoomableImageView");

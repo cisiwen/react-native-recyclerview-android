@@ -1,12 +1,15 @@
 import * as React from 'react';
 
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, UIManager, View } from 'react-native';
 import {
   PagerViewOnPageSelectedEvent,
   RecyclerviewAndroidView,
   SectionDataSource,
   SectionHeaderStyle,
+  Commands
 } from '@cisiwen/react-native-recyclerview-android';
+ 
+
  
 
 export default function App() {
@@ -48,8 +51,13 @@ export default function App() {
   const onLongPressed = (e: PagerViewOnPageSelectedEvent) => {
     console.log('onLongPressed', e.nativeEvent);
   };
+
+  const onRNSelectionModeChanged = () => {
+    Commands.toggleSelectionMode(recyclerview, true);
+  };
   const onItemPressed=(e:PagerViewOnPageSelectedEvent)=>{
     console.log('onItemPressed', e.nativeEvent);
+    onRNSelectionModeChanged();
   }
   const onItemSelectStateChanged=(e:PagerViewOnPageSelectedEvent)=>{
     console.log('onItemSelectStateChanged', e.nativeEvent);
@@ -66,12 +74,16 @@ export default function App() {
     Padding: 10
   }
   
+  let recyclerview:React.ElementRef<typeof RecyclerviewAndroidView>|null = null;
   return (
     <View style={styles.container}>
       
       { 7>3 ?
       <RecyclerviewAndroidView
-         sectionHeaderStyle={JSON
+        ref={(ref:React.ElementRef<RecyclerviewAndroidView>) => {
+          recyclerview = ref;
+        }}
+        sectionHeaderStyle={JSON
           .stringify(sectionHeaderStyle)}
         onLongPressed={onLongPressed}
         onItemPressed={onItemPressed}
