@@ -35,12 +35,19 @@ export type SectionHeaderStyle = {
 export type MediaHttpHeaders={[key:string]:string};
 
 
+export type RecyclerProps={
+  data:SectionDataSource[];
+  headerStyle:SectionHeaderStyle;
+  httpHeaders:MediaHttpHeaders;
+}
+
 interface NativeProps extends ViewProps {
   color?: string;
   sectionHeaderStyle?: string;
   dataSourceString?: string;
   dataSource?: Array<Asset>;
   httpHeadersString?: string;
+  recyclerPropString?:string;
   onLongPressed: DirectEventHandler<OnPageSelectedEventData>;
   onItemPressed: DirectEventHandler<OnPageSelectedEventData>;
   OnItemSelectStateChanged: DirectEventHandler<OnPageSelectedEventData>;

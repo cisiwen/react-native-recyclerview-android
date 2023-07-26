@@ -8,7 +8,7 @@ import {
   SectionHeaderStyle,
   Commands
 } from '@cisiwen/react-native-recyclerview-android';
-import type { MediaHttpHeaders } from 'react-native-recyclerview-android';
+import type { MediaHttpHeaders, RecyclerProps } from 'react-native-recyclerview-android';
  
 
  
@@ -78,22 +78,25 @@ export default function App() {
   let httpHeaders:MediaHttpHeaders ={
     "cookie":"testing"
   }
+
+  let recyclerProps:RecyclerProps={
+    headerStyle:sectionHeaderStyle,
+    httpHeaders:httpHeaders,
+    data:sections,
+  };
   let recyclerview:React.ElementRef<typeof RecyclerviewAndroidView>|null = null;
   return (
     <View style={styles.container}>
       
       { 7>3 ?
       <RecyclerviewAndroidView
-        ref={(ref:React.ElementRef<RecyclerviewAndroidView>) => {
+        ref={(ref:React.ElementRef<typeof RecyclerviewAndroidView>) => {
           recyclerview = ref;
         }}
-        sectionHeaderStyle={JSON
-          .stringify(sectionHeaderStyle)}
         onLongPressed={onLongPressed}
         onItemPressed={onItemPressed}
-        httpHeadersString={JSON.stringify(httpHeaders)}
         OnItemSelectStateChanged={onItemSelectStateChanged}
-        dataSourceString={dataSourceString}
+        recyclerPropString={JSON.stringify(recyclerProps)}
         color="#32a852"
         style={styles.box}
       />:null

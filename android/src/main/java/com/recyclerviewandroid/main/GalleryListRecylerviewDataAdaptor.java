@@ -323,18 +323,14 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
     private GlideUrl getGlideUrl(Asset asset) {
       GlideUrl glideUrl=null;
       Uri source = asset.image.imageUri;
-      if(source.getScheme().startsWith("http")){
-        glideUrl= new GlideUrl(source.toString(), new Headers() {
+      if(source.getScheme().startsWith("http")) {
+        glideUrl = new GlideUrl(source.toString(), new Headers() {
           @Override
           public Map<String, String> getHeaders() {
-            return  adaptor.httpHeaders;
+            return adaptor.httpHeaders;
           }
         });
       }
-      else {
-        glideUrl = new GlideUrl(source.toString());
-      }
-
       return  glideUrl;
     }
 
@@ -345,8 +341,13 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
       if(imageView!=null) {
         imageView.setZ(0);
         GlideUrl glideUrl = getGlideUrl(asset);
-        Glide.with(this.context).load(glideUrl).into(imageView);
-
+        if(glideUrl!=null) {
+          Glide.with(this.context).load(glideUrl).into(imageView);
+        }
+        else
+        {
+          Glide.with(this.context).load(asset.image.imageUri.toString()).into(imageView);
+        }
       }
       else if(asset.type=="Header"){
 

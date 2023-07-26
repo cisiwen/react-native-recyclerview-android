@@ -7,6 +7,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 import com.facebook.infer.annotation.Assertions;
+import com.facebook.react.bridge.PromiseImpl;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.common.MapBuilder;
 import com.facebook.react.module.annotations.ReactModule;
@@ -21,6 +22,7 @@ import com.recyclerviewandroid.libs.domain.SectionHeaderStyle;
 import com.recyclerviewandroid.libs.events.LongPressEvent;
 import com.recyclerviewandroid.libs.events.OnItemSelectStateChangedEvent;
 import com.recyclerviewandroid.libs.events.OnPressEvent;
+import com.recyclerviewandroid.libs.javascript.ReactRecyclerProps;
 import com.recyclerviewandroid.libs.javascript.ReactSectionDataSource;
 import com.recyclerviewandroid.main.HomePage;
 
@@ -43,6 +45,7 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
 
   private HomePage homePage;
 
+  private ReactRecyclerProps props;
   @Override
   public String getName() {
     return NAME;
@@ -94,6 +97,17 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
       Type headerType = new TypeToken<Map<String,String>>(){}.getType();
       this.httpHeaders = new Gson().fromJson(httpHeaders,headerType);
     }
+  }
+
+
+  @Override
+  @ReactProp(name = "recyclerPropString")
+  public void setReactRecyclerProps(RecyclerviewAndroidView view, @Nullable String recyclerProps) {
+    Type props = new TypeToken<ReactRecyclerProps>() {
+    }.getType();
+    this.props = new Gson().fromJson(recyclerProps, props);
+    homePage = new HomePage(view, this.context, this.context.getCurrentActivity());
+    homePage.setDataSourceMedia(this.props.data,this.props.headerStyle,this.props.httpHeaders);
   }
 
   @Override
