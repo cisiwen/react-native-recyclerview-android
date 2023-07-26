@@ -32,12 +32,15 @@ export type SectionHeaderStyle = {
   FontWeight:number;
 }
 
+export type MediaHttpHeaders={[key:string]:string};
+
 
 interface NativeProps extends ViewProps {
   color?: string;
   sectionHeaderStyle?: string;
   dataSourceString?: string;
   dataSource?: Array<Asset>;
+  httpHeadersString?: string;
   onLongPressed: DirectEventHandler<OnPageSelectedEventData>;
   onItemPressed: DirectEventHandler<OnPageSelectedEventData>;
   OnItemSelectStateChanged: DirectEventHandler<OnPageSelectedEventData>;

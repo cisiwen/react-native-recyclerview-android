@@ -34,10 +34,14 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
 
   public static final String NAME = "GalleryListView";
 
-  public  String CMD_TOGGLE_SELECTION_MODE="CMD_TOGGLE_SELECTION_MODE";
+  public static final String CMD_TOGGLE_SELECTION_MODE = "toggleSelectionMode";
 
   private SectionHeaderStyle style;
+
+  private Map<String, String> httpHeaders;
   private ThemedReactContext context;
+
+  private HomePage homePage;
 
   @Override
   public String getName() {
@@ -64,7 +68,8 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
     Long tick = now.getTime();
     Object one = dataSource.toArrayList().get(0);
     Log.i("setDataSource", String.format("%s-%s", tick, one.toString()));
-    new HomePage(view, this.context, this.context.getCurrentActivity()).loadGallery();
+    homePage = new HomePage(view, this.context, this.context.getCurrentActivity());
+    homePage.loadGallery();
   }
 
   @Override
@@ -78,7 +83,17 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
     //ObjectMapper mapper = new ObjectMapper();
 
     Log.i("setDataSourceString", String.format("%s-%s", tick, sources.size()));
-    new HomePage(view, this.context, this.context.getCurrentActivity()).setDataSourceMedia(sources, style);
+    homePage = new HomePage(view, this.context, this.context.getCurrentActivity());
+    homePage.setDataSourceMedia(sources, style,httpHeaders);
+  }
+
+  @Override
+  @ReactProp(name = "httpHeadersString")
+  public void setHttpHeaders(RecyclerviewAndroidView view, @Nullable String httpHeaders) {
+    if (httpHeaders != null) {
+      Type headerType = new TypeToken<Map<String,String>>(){}.getType();
+      this.httpHeaders = new Gson().fromJson(httpHeaders,headerType);
+    }
   }
 
   @Override
@@ -105,9 +120,15 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
       "toggleSelectionMode", CMD_TOGGLE_SELECTION_MODE
     );
   }
+
   @Override
   public void receiveCommand(final RecyclerviewAndroidView parent, String commandType, @Nullable ReadableArray args) {
-    Log.i("receiveCommand",commandType);
+    Log.i("receiveCommand", commandType);
+    switch (commandType) {
+      case CMD_TOGGLE_SELECTION_MODE:
+        boolean selectMode = args.getBoolean(0);
+        homePage.toggleSeledtionMode(selectMode);
+        break;
+    }
   }
-
 }

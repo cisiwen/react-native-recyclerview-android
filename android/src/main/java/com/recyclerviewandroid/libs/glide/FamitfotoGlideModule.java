@@ -1,6 +1,7 @@
 package com.recyclerviewandroid.libs.glide;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
@@ -23,6 +24,7 @@ public class FamitfotoGlideModule extends  AppGlideModule{
     int customMemoryCacheSize = (int) (1.2 * defaultMemoryCacheSize);
     int customBitmapPoolSize = (int) (1.2 * defaultBitmapPoolSize);
 
+    builder.setLogLevel(Log.DEBUG);
     builder.setMemoryCache(new LruResourceCache(customMemoryCacheSize));
     builder.setBitmapPool(new LruBitmapPool(customBitmapPoolSize));
     builder.setDiskCache(new InternalCacheDiskCacheFactory(context, 1000*1024*1024));

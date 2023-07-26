@@ -19,4 +19,6 @@ public abstract class RecyclerviewAndroidViewManagerSpec<T extends View> extends
   public abstract void setDataSourceString(RecyclerviewAndroidView view, @Nullable String dataSource);
 
   public abstract void setSectionHeaderStyle(T view, @Nullable String headerStyle);
+
+  public abstract void setHttpHeaders(T view, @Nullable String httpHeaders);
 }

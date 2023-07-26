@@ -1,6 +1,6 @@
 {
   "name": "@cisiwen/react-native-recyclerview-android",
-  "version": "0.1.11",
+  "version": "0.1.17",
   "description": "test",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",

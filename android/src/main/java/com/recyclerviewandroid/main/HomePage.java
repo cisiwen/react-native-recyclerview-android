@@ -25,6 +25,7 @@ import com.recyclerviewandroid.libs.javascript.ReactSectionDataSource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class HomePage {
 
@@ -77,7 +78,7 @@ public class HomePage {
     return false;
   }
 
-  public void setDataSourceMedia(List<ReactSectionDataSource> media, SectionHeaderStyle headerStyle) {
+  public void setDataSourceMedia(List<ReactSectionDataSource> media, SectionHeaderStyle headerStyle, Map<String,String> httpHeaders) {
     GetPhotoOutput result = new GetPhotoOutput();
     result.assets = new ArrayList<Asset>();
     int id = 0;
@@ -105,10 +106,15 @@ public class HomePage {
         result.assets.add(oneMedia);
       }
     }
-    dataAdaptor = new GalleryListRecylerviewDataAdaptor(recyclerView, result,headerStyle, (ReactContext) context);
+    dataAdaptor = new GalleryListRecylerviewDataAdaptor(recyclerView, result,headerStyle, httpHeaders, (ReactContext) context);
     recyclerView.setAdapter(dataAdaptor);
   }
 
+
+
+  public void  toggleSeledtionMode(boolean selecteMode) {
+    dataAdaptor.toggleSelectionMode(selecteMode);
+  }
   public void loadGallery() {
     if (this.checkPermission()) {
       GetPhotoInput input = new GetPhotoInput();
@@ -117,7 +123,7 @@ public class HomePage {
       GalleryAlbumProvider.getPhotos(input, this.context, new GalleryAlbumProvider.GetPhotoCallback() {
         @Override
         public void onResult(GetPhotoOutput result) {
-          dataAdaptor = new GalleryListRecylerviewDataAdaptor(recyclerView, result, null, (ReactContext) context);
+          dataAdaptor = new GalleryListRecylerviewDataAdaptor(recyclerView, result, null,null, (ReactContext) context);
           recyclerView.setAdapter(dataAdaptor);
         }
       });

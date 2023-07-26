@@ -8,6 +8,7 @@ import {
   SectionHeaderStyle,
   Commands
 } from '@cisiwen/react-native-recyclerview-android';
+import type { MediaHttpHeaders } from 'react-native-recyclerview-android';
  
 
  
@@ -25,13 +26,13 @@ export default function App() {
      eventListener.remove();
    }
   }, []);*/
-  for (let s = 0; s < 50; s++) {
+  for (let s = 0; s < 2; s++) {
     let section: SectionDataSource = {
       sectionTitle: `Gallery section ${s}`,
       sectionId: s.toString(),
       data: [],
     };
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 2; i++) {
       section.data.push({
         contentId: `${i}`,
         uri:
@@ -74,6 +75,9 @@ export default function App() {
     Padding: 10
   }
   
+  let httpHeaders:MediaHttpHeaders ={
+    "cookie":"testing"
+  }
   let recyclerview:React.ElementRef<typeof RecyclerviewAndroidView>|null = null;
   return (
     <View style={styles.container}>
@@ -87,6 +91,7 @@ export default function App() {
           .stringify(sectionHeaderStyle)}
         onLongPressed={onLongPressed}
         onItemPressed={onItemPressed}
+        httpHeadersString={JSON.stringify(httpHeaders)}
         OnItemSelectStateChanged={onItemSelectStateChanged}
         dataSourceString={dataSourceString}
         color="#32a852"

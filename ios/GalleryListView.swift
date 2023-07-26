@@ -44,7 +44,7 @@ class GalleryListView:UIView {
     
     
     @objc func toggleSelectionMode(_ selectionMode:Bool)-> Void {
-        print(selectionMode);
+        rnCollectionViewController?.toggleSelectionMode();
     }
     
     override func didSetProps(_ changedProps: [String]!) {

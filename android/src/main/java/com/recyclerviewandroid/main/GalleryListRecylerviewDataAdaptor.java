@@ -27,6 +27,9 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.GlideUrl;
+import com.bumptech.glide.load.model.Headers;
+import com.bumptech.glide.load.model.LazyHeaders;
 import com.facebook.react.bridge.ReactContext;
 import com.recyclerviewandroid.R;
 import com.recyclerviewandroid.libs.domain.Asset;
@@ -36,7 +39,9 @@ import com.recyclerviewandroid.libs.events.EventDispatcher;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<GalleryListRecylerviewDataAdaptor.ViewHolder> implements EventDispatcher.OnItemLongPressListener {
@@ -47,16 +52,20 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
 
   private SectionHeaderStyle headerStyle;
 
+  private Map<String,String> httpHeaders;
+
   private List<ViewHolder> visibleItems;
   private boolean isSelectionMode;
   ReactContext reactContext;
   View view;
-  public GalleryListRecylerviewDataAdaptor(View view,GetPhotoOutput photos, SectionHeaderStyle headerStyle, ReactContext reactContext) {
+  public GalleryListRecylerviewDataAdaptor(View view,GetPhotoOutput photos, SectionHeaderStyle headerStyle, Map<String,String> httpHeaders, ReactContext reactContext) {
     this.photos = photos;
     this.reactContext = reactContext;
     this.view = view;
     this.headerStyle = headerStyle;
+    this.httpHeaders = httpHeaders;
     this.setHasStableIds(true);
+
   }
 
   @NonNull
@@ -128,8 +137,8 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
 
   @Override
   public void onItemLongPressed( Asset asset) {
-    toggleSelectionMode();
-
+    this.isSelectionMode = !this.isSelectionMode;
+    toggleSelectionMode(this.isSelectionMode);
     EventDispatcher.sendItemOnLongPress(this.reactContext, view.getId(),asset);
   }
 
@@ -144,14 +153,17 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
 
 
 
-  private  void toggleSelectionMode() {
-    this.isSelectionMode = !this.isSelectionMode;
+
+
+  public void toggleSelectionMode(boolean isSelectionMode) {
+
+    this.isSelectionMode=isSelectionMode;
     for (int i = 0; i < this.photos.assets.size(); i++) {
-      this.photos.assets.get(i).isSelectionMode = this.isSelectionMode;
+      this.photos.assets.get(i).isSelectionMode = isSelectionMode;
     }
     if (this.visibleItems != null) {
       for (int i = 0; i < this.visibleItems.size(); i++) {
-        this.visibleItems.get(i).toggleSelectionMode(this.isSelectionMode);
+        this.visibleItems.get(i).toggleSelectionMode(isSelectionMode);
       }
     }
   }
@@ -306,13 +318,34 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
         this.isInSelectionMode = visible;
       }
     }
+
+
+    private GlideUrl getGlideUrl(Asset asset) {
+      GlideUrl glideUrl=null;
+      Uri source = asset.image.imageUri;
+      if(source.getScheme().startsWith("http")){
+        glideUrl= new GlideUrl(source.toString(), new Headers() {
+          @Override
+          public Map<String, String> getHeaders() {
+            return  adaptor.httpHeaders;
+          }
+        });
+      }
+      else {
+        glideUrl = new GlideUrl(source.toString());
+      }
+
+      return  glideUrl;
+    }
+
     public void setData(Asset asset) throws IOException {
 
       this.asset = asset;
       toggleSelectionMode(asset.isSelectionMode);
       if(imageView!=null) {
         imageView.setZ(0);
-        Glide.with(this.context).load(asset.image.imageUri.toString()).into(imageView);
+        GlideUrl glideUrl = getGlideUrl(asset);
+        Glide.with(this.context).load(glideUrl).into(imageView);
 
       }
       else if(asset.type=="Header"){

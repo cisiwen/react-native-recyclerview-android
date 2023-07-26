@@ -1,6 +1,5 @@
-/// <reference types="react-native/types/modules/codegen" />
-/// <reference types="react-native/codegen" />
-import type { ViewProps } from "react-native";
+/// <reference types="react" />
+import type { HostComponent, ViewProps } from "react-native";
 import type * as ReactNative from 'react-native';
 import type { DirectEventHandler, Int32 } from "react-native/Libraries/Types/CodegenTypes";
 type OnPageSelectedEventData = Readonly<{
@@ -38,6 +37,11 @@ interface NativeProps extends ViewProps {
     onItemPressed: DirectEventHandler<OnPageSelectedEventData>;
     OnItemSelectStateChanged: DirectEventHandler<OnPageSelectedEventData>;
 }
-declare const _default: import("react-native/Libraries/Utilities/codegenNativeComponent").NativeComponentType<NativeProps>;
-export default _default;
+declare const RecyclerviewAndroidView: HostComponent<NativeProps>;
+export default RecyclerviewAndroidView;
+type RecyclerviewAndroidViewType = ReactNative.HostComponent<NativeProps>;
+export interface NativeCommands {
+    toggleSelectionMode: (viewRef: React.ElementRef<RecyclerviewAndroidViewType>, selectionMode: boolean) => void;
+}
+export declare const Commands: NativeCommands;
 //# sourceMappingURL=RecyclerviewAndroidViewNativeComponent.d.ts.map
