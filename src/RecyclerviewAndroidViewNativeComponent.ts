@@ -51,6 +51,7 @@ interface NativeProps extends ViewProps {
   onLongPressed: DirectEventHandler<OnPageSelectedEventData>;
   onItemPressed: DirectEventHandler<OnPageSelectedEventData>;
   OnItemSelectStateChanged: DirectEventHandler<OnPageSelectedEventData>;
+  onVisibleItemsChange: DirectEventHandler<any>
 }
 
 

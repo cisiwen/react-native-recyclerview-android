@@ -1,5 +1,6 @@
 package com.recyclerviewandroid.main;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -7,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -30,6 +32,11 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.GlideUrl;
 import com.bumptech.glide.load.model.Headers;
 import com.bumptech.glide.load.model.LazyHeaders;
+import com.bumptech.glide.request.FutureTarget;
+import com.bumptech.glide.request.Request;
+import com.bumptech.glide.request.target.SizeReadyCallback;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
 import com.facebook.react.bridge.ReactContext;
 import com.recyclerviewandroid.R;
 import com.recyclerviewandroid.libs.domain.Asset;
@@ -42,6 +49,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 
 
 public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<GalleryListRecylerviewDataAdaptor.ViewHolder> implements EventDispatcher.OnItemLongPressListener {
@@ -75,11 +84,11 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
     if (viewType == 1) {
       v = LayoutInflater.from(parent.getContext())
         .inflate(R.layout.list_section_header, parent, false);
-      this.setSectionHeaderStyle(v,this.headerStyle);
+      //this.setSectionHeaderStyle(v,this.headerStyle);
     } else {
       v = LayoutInflater.from(parent.getContext())
         .inflate(R.layout.photo_list_item, parent, false);
-      v.setPadding(2,2,2,2);
+      //v.setPadding(2,2,2,2);
     }
     return new ViewHolder(v, parent.getContext(), this);
   }
@@ -211,21 +220,28 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
 
     public ViewHolder(@NonNull View itemView, Context context, GalleryListRecylerviewDataAdaptor adapter) {
       super(itemView);
+      this.context = context;
       this.adaptor = adapter;
       imageView = itemView.findViewById(R.id.list_item_imageview);
       headerTextView = itemView.findViewById(R.id.header_title);
       checkBox = itemView.findViewById(R.id.list_item_checkbox);
       controlContainer = itemView.findViewById(R.id.list_item_control_container);
       options = new BitmapFactory.Options();
+      initializeViewHolder();
+    }
+
+    private void initializeViewHolder(){
 
       if (itemView != null) {
+
+
         itemView.setOnLongClickListener(new View.OnLongClickListener() {
           @Override
           public boolean onLongClick(View v) {
             // Call the onItemLongPressed() method of the adapter
 
             Log.i("REPRESSION", "Triggered");
-            adapter.onItemLongPressed(asset);
+            adaptor.onItemLongPressed(asset);
             return true;
           }
         });
@@ -234,83 +250,22 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
           @Override
           public void onClick(View view) {
 
-            adapter.onItemPressed(asset);
+            adaptor.onItemPressed(asset);
           }
         });
-        this.context = context;
+
         //options.inSampleSize=true
       }
       if (checkBox != null) {
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
           @Override
           public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-            adapter.onSingleItemSelectChanged(b, asset);
+            adaptor.onSingleItemSelectChanged(b, asset);
           }
         });
       }
     }
 
-
-    private static class LoadLocalMediaStoreDataTask extends AsyncTask<Void, Void, Bitmap> {
-      private Context context;
-      private Uri uri;
-      private Long imageId;
-
-      private Callback callback;
-
-      public LoadLocalMediaStoreDataTask(Asset asset, Context context, Callback bitmapDataCallback) {
-        this.context = context;
-        this.uri = asset.image.imageUri;
-
-        this.imageId = asset.image.imageId;
-        this.callback = bitmapDataCallback;
-      }
-
-      private Bitmap errorBitmap() {
-        int width = 200;
-        int height = 200;
-        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(bitmap);
-
-        Paint paint = new Paint();
-        paint.setColor(Color.BLACK);
-        paint.setStyle(Paint.Style.FILL);
-        canvas.drawPaint(paint);
-
-        paint.setColor(Color.WHITE);
-        paint.setAntiAlias(true);
-        paint.setTextSize(14.f);
-        paint.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText("Hello Android!", (width / 2.f), (height / 2.f), paint);
-        return bitmap;
-      }
-
-      @Override
-      protected Bitmap doInBackground(Void... voids) {
-        Bitmap thumbBitmap = null;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-          try {
-            thumbBitmap = this.context.getContentResolver().loadThumbnail(this.uri, new Size(200, 200), null);
-          } catch (IOException e) {
-            Log.e("LoadMediaStoreDataTask", this.uri.toString(), e);
-          } catch (Exception e) {
-            Log.e("LoadMediaStoreDataTask", this.uri.toString(), e);
-          }
-        } else {
-          thumbBitmap = MediaStore.Images.Thumbnails.getThumbnail(this.context.getContentResolver(),
-            this.imageId, MediaStore.Images.Thumbnails.MINI_KIND, null);
-        }
-        if (thumbBitmap == null) {
-          thumbBitmap = errorBitmap();
-        }
-        return thumbBitmap;
-      }
-
-      @Override
-      protected void onPostExecute(Bitmap result) {
-        callback.onResult(result);
-      }
-    }
 
     public  void toggleSelectionMode(boolean visible) {
       if (controlContainer != null && visible != this.isInSelectionMode) {
@@ -334,26 +289,104 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
       return  glideUrl;
     }
 
-    public void setData(Asset asset) throws IOException {
-
+    public void setDataBackground(Asset asset,Context context) throws ExecutionException, InterruptedException {
       this.asset = asset;
       toggleSelectionMode(asset.isSelectionMode);
-      if(imageView!=null) {
+      if (imageView != null) {
         imageView.setZ(0);
+
         GlideUrl glideUrl = getGlideUrl(asset);
-        if(glideUrl!=null) {
-          Glide.with(this.context).load(glideUrl).into(imageView);
-        }
-        else
-        {
-          Glide.with(this.context).load(asset.image.imageUri.toString()).into(imageView);
-        }
-      }
-      else if(asset.type=="Header"){
 
-          headerTextView.setText(asset.group_name);
+        if (glideUrl != null) {
+            Glide.with(context).asBitmap().load(glideUrl).into(imageView);
+        } else {
+           Glide.with(context).asBitmap().load(asset.image.imageUri.toString()).into(imageView);
+        }
+      } else if (asset.type == "Header") {
+        headerTextView.setText(asset.group_name);
       }
+    }
+    public void setData(Asset asset) throws IOException {
+      new RunBackend().execute(new Runnable() {
+        @Override
+        public void run() {
+          try {
+            setDataBackground(asset, context);
+          }
+          catch (Exception ex){
+            Log.e("setData",ex.getMessage());
+          }
+        }
+      });
+    }
 
+    public static class RunBackend  implements Executor {
+      @Override
+      public void execute(Runnable runnable) {
+        runnable.run();
+      }
     }
   }
+
+  private static class LoadLocalMediaStoreDataTask extends AsyncTask<Void, Void, Bitmap> {
+    private Context context;
+    private Uri uri;
+    private Long imageId;
+
+    private Callback callback;
+
+    public LoadLocalMediaStoreDataTask(Asset asset, Context context, Callback bitmapDataCallback) {
+      this.context = context;
+      this.uri = asset.image.imageUri;
+
+      this.imageId = asset.image.imageId;
+      this.callback = bitmapDataCallback;
+    }
+
+    private Bitmap errorBitmap() {
+      int width = 200;
+      int height = 200;
+      Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+      Canvas canvas = new Canvas(bitmap);
+
+      Paint paint = new Paint();
+      paint.setColor(Color.BLACK);
+      paint.setStyle(Paint.Style.FILL);
+      canvas.drawPaint(paint);
+
+      paint.setColor(Color.WHITE);
+      paint.setAntiAlias(true);
+      paint.setTextSize(14.f);
+      paint.setTextAlign(Paint.Align.CENTER);
+      canvas.drawText("Hello Android!", (width / 2.f), (height / 2.f), paint);
+      return bitmap;
+    }
+
+    @Override
+    protected Bitmap doInBackground(Void... voids) {
+      Bitmap thumbBitmap = null;
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        try {
+          thumbBitmap = this.context.getContentResolver().loadThumbnail(this.uri, new Size(200, 200), null);
+        } catch (IOException e) {
+          Log.e("LoadMediaStoreDataTask", this.uri.toString(), e);
+        } catch (Exception e) {
+          Log.e("LoadMediaStoreDataTask", this.uri.toString(), e);
+        }
+      } else {
+        thumbBitmap = MediaStore.Images.Thumbnails.getThumbnail(this.context.getContentResolver(),
+          this.imageId, MediaStore.Images.Thumbnails.MINI_KIND, null);
+      }
+      if (thumbBitmap == null) {
+        thumbBitmap = errorBitmap();
+      }
+      return thumbBitmap;
+    }
+
+    @Override
+    protected void onPostExecute(Bitmap result) {
+      callback.onResult(result);
+    }
+  }
+
 }

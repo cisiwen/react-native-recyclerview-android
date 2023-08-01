@@ -2,12 +2,10 @@ package com.recyclerviewandroid;
 
 import android.graphics.Color;
 import android.util.Log;
-import android.view.View;
+import android.view.LayoutInflater;
 
 import androidx.annotation.Nullable;
 
-import com.facebook.infer.annotation.Assertions;
-import com.facebook.react.bridge.PromiseImpl;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.common.MapBuilder;
 import com.facebook.react.module.annotations.ReactModule;
@@ -17,11 +15,11 @@ import com.facebook.react.uimanager.events.ContentSizeChangeEvent;
 import com.facebook.react.views.scroll.ScrollEventType;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.recyclerviewandroid.libs.domain.Media;
 import com.recyclerviewandroid.libs.domain.SectionHeaderStyle;
 import com.recyclerviewandroid.libs.events.LongPressEvent;
 import com.recyclerviewandroid.libs.events.OnItemSelectStateChangedEvent;
 import com.recyclerviewandroid.libs.events.OnPressEvent;
+import com.recyclerviewandroid.libs.events.VisibleItemsChangeEvent;
 import com.recyclerviewandroid.libs.javascript.ReactRecyclerProps;
 import com.recyclerviewandroid.libs.javascript.ReactSectionDataSource;
 import com.recyclerviewandroid.main.HomePage;
@@ -54,7 +52,9 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
   @Override
   public RecyclerviewAndroidView createViewInstance(ThemedReactContext context) {
     this.context = context;
-    return new RecyclerviewAndroidView(context);
+    //RecyclerviewAndroidView verticalRecyclerView = (RecyclerviewAndroidView) LayoutInflater.from(context).inflate(R.layout.recyclerviewandroidview,null);
+    RecyclerviewAndroidView verticalRecyclerView = new RecyclerviewAndroidView(context);
+    return verticalRecyclerView;
   }
 
   @Override
@@ -121,11 +121,14 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
 
   @Override
   public Map getExportedCustomDirectEventTypeConstants() {
-    return MapBuilder.builder().put(
-      LongPressEvent.EVENT_NAME, MapBuilder.of("registrationName", "onLongPressed")
-    ).put(
-      OnPressEvent.EVENT_NAME, MapBuilder.of("registrationName", "onItemPressed")
-    ).put(OnItemSelectStateChangedEvent.EVENT_NAME, MapBuilder.of("registrationName", "OnItemSelectStateChanged")).build();
+    return MapBuilder.builder().put(LongPressEvent.EVENT_NAME, MapBuilder.of("registrationName", "onLongPressed"))
+      .put(OnPressEvent.EVENT_NAME, MapBuilder.of("registrationName", "onItemPressed"))
+      .put(OnItemSelectStateChangedEvent.EVENT_NAME, MapBuilder.of("registrationName", "OnItemSelectStateChanged"))
+      .put(ScrollEventType.getJSEventName(ScrollEventType.BEGIN_DRAG), MapBuilder.of("registrationName", "onScrollBeginDrag"))
+      .put(ScrollEventType.getJSEventName(ScrollEventType.SCROLL), MapBuilder.of("registrationName", "onScroll"))
+      .put(ScrollEventType.getJSEventName(ScrollEventType.END_DRAG), MapBuilder.of("registrationName", "onScrollEndDrag"))
+      .put(VisibleItemsChangeEvent.EVENT_NAME, MapBuilder.of("registrationName", "onVisibleItemsChange"))
+      .put(ContentSizeChangeEvent.EVENT_NAME, MapBuilder.of("registrationName", "onContentSizeChange")).build();
   }
 
   @Override

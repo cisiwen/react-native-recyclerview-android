@@ -6,12 +6,12 @@ import {
   RecyclerviewAndroidView,
   SectionDataSource,
   SectionHeaderStyle,
-  Commands
+  Commands,
 } from '@cisiwen/react-native-recyclerview-android';
-import type { MediaHttpHeaders, RecyclerProps } from 'react-native-recyclerview-android';
- 
-
- 
+import type {
+  MediaHttpHeaders,
+  RecyclerProps,
+} from '@cisiwen/react-native-recyclerview-android';
 
 export default function App() {
   let now = new Date().getTime().toString();
@@ -26,13 +26,13 @@ export default function App() {
      eventListener.remove();
    }
   }, []);*/
-  for (let s = 0; s < 2; s++) {
+  for (let s = 0; s < 200; s++) {
     let section: SectionDataSource = {
       sectionTitle: `Gallery section ${s}`,
       sectionId: s.toString(),
       data: [],
     };
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 50; i++) {
       section.data.push({
         contentId: `${i}`,
         uri:
@@ -56,51 +56,69 @@ export default function App() {
   const onRNSelectionModeChanged = () => {
     Commands.toggleSelectionMode(recyclerview, true);
   };
-  const onItemPressed=(e:PagerViewOnPageSelectedEvent)=>{
+  const onItemPressed = (e: PagerViewOnPageSelectedEvent) => {
     console.log('onItemPressed', e.nativeEvent);
     onRNSelectionModeChanged();
-  }
-  const onItemSelectStateChanged=(e:PagerViewOnPageSelectedEvent)=>{
+  };
+  const onItemSelectStateChanged = (e: PagerViewOnPageSelectedEvent) => {
     console.log('onItemSelectStateChanged', e.nativeEvent);
-  }
+  };
   console.log(now, new Date().getTime().toString());
   now = new Date().getTime().toString();
   const dataSourceString = JSON.stringify(sections);
   console.log('json.stringfy', now, new Date().getTime().toString());
-  const sectionHeaderStyle:SectionHeaderStyle = {
+  const sectionHeaderStyle: SectionHeaderStyle = {
     BackgroudColor: '#000000',
     FontSize: 20,
     FontWeight: 600,
     FontColor: '#ffffff',
-    Padding: 10
-  }
-  
-  let httpHeaders:MediaHttpHeaders ={
-    "cookie":"testing"
-  }
-
-  let recyclerProps:RecyclerProps={
-    headerStyle:sectionHeaderStyle,
-    httpHeaders:httpHeaders,
-    data:sections,
+    Padding: 10,
   };
-  let recyclerview:React.ElementRef<typeof RecyclerviewAndroidView>|null = null;
+
+  let httpHeaders: MediaHttpHeaders = {
+    cookie: 'testing',
+  };
+
+  let recyclerProps: RecyclerProps = {
+    headerStyle: sectionHeaderStyle,
+    httpHeaders: httpHeaders,
+    data: sections,
+  };
+  let recyclerview: React.ElementRef<typeof RecyclerviewAndroidView> | null =
+    null;
   return (
     <View style={styles.container}>
-      
-      { 7>3 ?
-      <RecyclerviewAndroidView
-        ref={(ref:React.ElementRef<typeof RecyclerviewAndroidView>) => {
-          recyclerview = ref;
-        }}
-        onLongPressed={onLongPressed}
-        onItemPressed={onItemPressed}
-        OnItemSelectStateChanged={onItemSelectStateChanged}
-        recyclerPropString={JSON.stringify(recyclerProps)}
-        color="#32a852"
-        style={styles.box}
-      />:null
-         }
+      {7 > 3 ? (
+        <RecyclerviewAndroidView
+          onLayout={(event: any) => {
+            console.log('onLayout',event.nativeEvent);
+          }}
+          ref={(ref: React.ElementRef<typeof RecyclerviewAndroidView>) => {
+            recyclerview = ref;
+          }}
+          onLongPressed={onLongPressed}
+          onItemPressed={onItemPressed}
+          OnItemSelectStateChanged={onItemSelectStateChanged}
+          onScrollBeginDrag={(event: any) => {
+            console.log('onScrollBeginDrag',event.nativeEvent);
+          }}
+          onScroll={(event: any) => {
+            console.log('onScroll',event.nativeEvent);
+          }}
+          onScrollEndDrag={(event: any) => {
+            console.log('onScrollEndDrag',event.nativeEvent);
+          }}
+          onContentSizeChange={(event: any) => {
+            console.log('onContentSizeChange',event.nativeEvent);
+          }}
+          onVisibleItemsChange={(event: any) => {
+            console.log('onVisibleItemsChange',event.nativeEvent);
+          }}
+          recyclerPropString={JSON.stringify(recyclerProps)}
+          color="#32a852"
+          style={styles.box}
+        />
+      ) : null}
     </View>
   );
 }
@@ -111,7 +129,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffcc00',
   },
   box: {
-    flex:1,
+    flex: 1,
     overflow: 'hidden',
     backgroundColor: 'green',
     margin: 0,

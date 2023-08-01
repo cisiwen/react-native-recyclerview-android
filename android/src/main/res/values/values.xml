@@ -2,5 +2,9 @@
 <resources>
     <style name="ScrollbarRecyclerView" parent="android:Widget">
         <item name="android:scrollbars">vertical</item>
+        <item name="android:fadeScrollbars">true</item>
+        <item name="android:scrollbarAlwaysDrawVerticalTrack">false</item>
+        <item name="android:scrollbarThumbVertical">@drawable/thumb_shape</item>
+        <item name="android:scrollbarTrackVertical">@drawable/scrollbar_track</item>
     </style>
 </resources>
