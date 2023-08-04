@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -45,6 +46,7 @@ import com.recyclerviewandroid.libs.domain.SectionHeaderStyle;
 import com.recyclerviewandroid.libs.events.EventDispatcher;
 
 import java.io.IOException;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,18 +58,22 @@ import java.util.concurrent.Executor;
 public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<GalleryListRecylerviewDataAdaptor.ViewHolder> implements EventDispatcher.OnItemLongPressListener {
 
 
+  public static  int VIEWTYPE_HEADER=1;
+  public static int VIEWTYPE_PHOTO=0;
+  public static int VIEWTYPE_VIDEO=2;
   private static final String TAG = "GalleryListDataAdaptor";
   private GetPhotoOutput photos;
 
   private SectionHeaderStyle headerStyle;
 
-  private Map<String,String> httpHeaders;
+  private Map<String, String> httpHeaders;
 
   private List<ViewHolder> visibleItems;
   private boolean isSelectionMode;
   ReactContext reactContext;
   View view;
-  public GalleryListRecylerviewDataAdaptor(View view,GetPhotoOutput photos, SectionHeaderStyle headerStyle, Map<String,String> httpHeaders, ReactContext reactContext) {
+
+  public GalleryListRecylerviewDataAdaptor(View view, GetPhotoOutput photos, SectionHeaderStyle headerStyle, Map<String, String> httpHeaders, ReactContext reactContext) {
     this.photos = photos;
     this.reactContext = reactContext;
     this.view = view;
@@ -81,20 +87,23 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
   @Override
   public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     View v;
-    if (viewType == 1) {
+    if (viewType == VIEWTYPE_HEADER) {
       v = LayoutInflater.from(parent.getContext())
         .inflate(R.layout.list_section_header, parent, false);
-      //this.setSectionHeaderStyle(v,this.headerStyle);
+      this.setSectionHeaderStyle(v, this.headerStyle);
+    } else if (viewType == VIEWTYPE_VIDEO) {
+      v = LayoutInflater.from(parent.getContext())
+        .inflate(R.layout.video_list_item, parent, false);
+      //v.setPadding(2,2,2,2);
     } else {
       v = LayoutInflater.from(parent.getContext())
         .inflate(R.layout.photo_list_item, parent, false);
-      //v.setPadding(2,2,2,2);
     }
     return new ViewHolder(v, parent.getContext(), this);
   }
 
-  public  void  setSectionHeaderStyle(View view, SectionHeaderStyle style){
-    if(style!=null) {
+  public void setSectionHeaderStyle(View view, SectionHeaderStyle style) {
+    if (style != null) {
       if (style.BackgroudColor != null) {
         view.setBackgroundColor(Color.parseColor(style.BackgroudColor));
       }
@@ -107,12 +116,12 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
           if (style.FontSize > 0) {
             textView.setTextSize(style.FontSize);
           }
-          if(style.FontColor!=null){
+          if (style.FontColor != null) {
             textView.setTextColor(Color.parseColor(style.FontColor));
           }
           if (style.FontWeight > 0) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-              textView.setTypeface(Typeface.create(null,style.FontWeight,false));
+              textView.setTypeface(Typeface.create(null, style.FontWeight, false));
             }
           }
         }
@@ -123,7 +132,7 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
 
   @Override
   public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-    Log.println(Log.INFO,"onBindViewHolder", String.valueOf(position));
+    Log.println(Log.INFO, "onBindViewHolder", String.valueOf(position));
     try {
       holder.setData(this.photos.assets.get(position));
     } catch (IOException e) {
@@ -136,7 +145,7 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
   @Override
   public long getItemId(int position) {
     Asset asset = this.photos.assets.get(position);
-    return asset.type == "Header" ? asset.group_id :  asset.image.imageId;
+    return asset.type == "Header" ? asset.group_id : asset.image.imageId;
   }
 
   @Override
@@ -145,13 +154,13 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
   }
 
   @Override
-  public void onItemLongPressed( Asset asset) {
+  public void onItemLongPressed(Asset asset) {
     this.isSelectionMode = !this.isSelectionMode;
     toggleSelectionMode(this.isSelectionMode);
-    EventDispatcher.sendItemOnLongPress(this.reactContext, view.getId(),asset);
+    EventDispatcher.sendItemOnLongPress(this.reactContext, view.getId(), asset);
   }
 
-  public  void  onItemPressed( Asset asset) {
+  public void onItemPressed(Asset asset) {
     EventDispatcher.sendItemOnPress(this.reactContext, view.getId(), asset);
   }
 
@@ -161,12 +170,9 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
   }
 
 
-
-
-
   public void toggleSelectionMode(boolean isSelectionMode) {
 
-    this.isSelectionMode=isSelectionMode;
+    this.isSelectionMode = isSelectionMode;
     for (int i = 0; i < this.photos.assets.size(); i++) {
       this.photos.assets.get(i).isSelectionMode = isSelectionMode;
     }
@@ -178,16 +184,17 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
   }
 
   @Override
-  public void onViewAttachedToWindow(ViewHolder viewHolder){
-    if(this.visibleItems == null){
+  public void onViewAttachedToWindow(ViewHolder viewHolder) {
+    if (this.visibleItems == null) {
       this.visibleItems = new ArrayList<ViewHolder>();
     }
     this.visibleItems.add(viewHolder);
   }
+
   @Override
-  public void  onViewDetachedFromWindow(ViewHolder viewHolder) {
+  public void onViewDetachedFromWindow(ViewHolder viewHolder) {
     int index = this.visibleItems.indexOf(viewHolder);
-    if(index>-1){
+    if (index > -1) {
       this.visibleItems.remove(index);
     }
   }
@@ -195,8 +202,15 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
   @Override
   public int getItemViewType(int position) {
     Asset asset = this.photos.assets.get(position);
-    return  asset.type=="Header" ? 1 :0;
+    if (asset.type == "Header") {
+      return VIEWTYPE_HEADER;
+    } else if (asset.originalAsset.mediaType.equals("video")) {
+      return VIEWTYPE_VIDEO;
+    } else {
+      return VIEWTYPE_PHOTO;
+    }
   }
+
   public interface Callback {
     void onResult(Bitmap result);
   }
@@ -214,8 +228,8 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
 
     Boolean isInSelectionMode = false;
 
+    ImageButton playButton;
     Asset asset = null;
-
 
 
     public ViewHolder(@NonNull View itemView, Context context, GalleryListRecylerviewDataAdaptor adapter) {
@@ -226,15 +240,14 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
       headerTextView = itemView.findViewById(R.id.header_title);
       checkBox = itemView.findViewById(R.id.list_item_checkbox);
       controlContainer = itemView.findViewById(R.id.list_item_control_container);
+      playButton = itemView.findViewById(R.id.list_item_play_button);
       options = new BitmapFactory.Options();
       initializeViewHolder();
     }
 
-    private void initializeViewHolder(){
+    private void initializeViewHolder() {
 
       if (itemView != null) {
-
-
         itemView.setOnLongClickListener(new View.OnLongClickListener() {
           @Override
           public boolean onLongClick(View v) {
@@ -267,7 +280,7 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
     }
 
 
-    public  void toggleSelectionMode(boolean visible) {
+    public void toggleSelectionMode(boolean visible) {
       if (controlContainer != null && visible != this.isInSelectionMode) {
         controlContainer.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
         this.isInSelectionMode = visible;
@@ -276,9 +289,9 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
 
 
     private GlideUrl getGlideUrl(Asset asset) {
-      GlideUrl glideUrl=null;
+      GlideUrl glideUrl = null;
       Uri source = asset.image.imageUri;
-      if(source.getScheme().startsWith("http")) {
+      if (source.getScheme().startsWith("http")) {
         glideUrl = new GlideUrl(source.toString(), new Headers() {
           @Override
           public Map<String, String> getHeaders() {
@@ -286,11 +299,16 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
           }
         });
       }
-      return  glideUrl;
+      return glideUrl;
     }
 
-    public void setDataBackground(Asset asset,Context context) throws ExecutionException, InterruptedException {
+    public void setDataBackground(Asset asset, Context context) throws ExecutionException, InterruptedException {
       this.asset = asset;
+      if (asset.originalAsset != null && asset.originalAsset.mediaType.equals("video")) {
+        if (playButton != null) {
+          playButton.setVisibility(View.VISIBLE);
+        }
+      }
       toggleSelectionMode(asset.isSelectionMode);
       if (imageView != null) {
         imageView.setZ(0);
@@ -298,29 +316,29 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
         GlideUrl glideUrl = getGlideUrl(asset);
 
         if (glideUrl != null) {
-            Glide.with(context).asBitmap().load(glideUrl).into(imageView);
+          Glide.with(context).asBitmap().load(glideUrl).into(imageView);
         } else {
-           Glide.with(context).asBitmap().load(asset.image.imageUri.toString()).into(imageView);
+          Glide.with(context).asBitmap().load(asset.image.imageUri.toString()).into(imageView);
         }
       } else if (asset.type == "Header") {
         headerTextView.setText(asset.group_name);
       }
     }
+
     public void setData(Asset asset) throws IOException {
       new RunBackend().execute(new Runnable() {
         @Override
         public void run() {
           try {
             setDataBackground(asset, context);
-          }
-          catch (Exception ex){
-            Log.e("setData",ex.getMessage());
+          } catch (Exception ex) {
+            Log.e("setData", ex.getMessage());
           }
         }
       });
     }
 
-    public static class RunBackend  implements Executor {
+    public static class RunBackend implements Executor {
       @Override
       public void execute(Runnable runnable) {
         runnable.run();

@@ -72,7 +72,7 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
     Object one = dataSource.toArrayList().get(0);
     Log.i("setDataSource", String.format("%s-%s", tick, one.toString()));
     homePage = new HomePage(view, this.context, this.context.getCurrentActivity());
-    homePage.loadGallery();
+    homePage.loadGallery(style,httpHeaders);
   }
 
   @Override
@@ -108,6 +108,7 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
     this.props = new Gson().fromJson(recyclerProps, props);
     homePage = new HomePage(view, this.context, this.context.getCurrentActivity());
     homePage.setDataSourceMedia(this.props.data,this.props.headerStyle,this.props.httpHeaders);
+    //homePage.loadGallery(style,httpHeaders);
   }
 
   @Override

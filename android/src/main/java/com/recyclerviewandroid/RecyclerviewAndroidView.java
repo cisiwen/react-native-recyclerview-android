@@ -26,6 +26,7 @@ import com.facebook.react.views.scroll.OnScrollDispatchHelper;
 import com.facebook.react.views.scroll.ScrollEvent;
 import com.facebook.react.views.scroll.ScrollEventType;
 import com.recyclerviewandroid.libs.events.VisibleItemsChangeEvent;
+import com.recyclerviewandroid.main.GalleryListRecylerviewDataAdaptor;
 
 public class RecyclerviewAndroidView extends RecyclerView {
 
@@ -91,7 +92,7 @@ public class RecyclerviewAndroidView extends RecyclerView {
     layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup(){
       @Override
       public int getSpanSize(int position) {
-        return  getAdapter().getItemViewType(position)==1 ? 4: 1;
+        return  getAdapter().getItemViewType(position)== GalleryListRecylerviewDataAdaptor.VIEWTYPE_HEADER ? 4: 1;
       }
     });
 

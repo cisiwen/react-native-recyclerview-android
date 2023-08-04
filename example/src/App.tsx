@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { StyleSheet, UIManager, View } from 'react-native';
+import { PermissionsAndroid, Platform, StyleSheet, UIManager, View } from 'react-native';
 import {
   PagerViewOnPageSelectedEvent,
   RecyclerviewAndroidView,
@@ -16,6 +16,54 @@ import type {
 export default function App() {
   let now = new Date().getTime().toString();
   let sections: SectionDataSource[] = [];
+
+  const  hasAndroidPermission= async ()=>{
+    const getCheckPermissionPromise = () => {
+      if (Platform.OS=="android" && Platform.Version >= 33) {
+        return Promise.all([
+          PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES),
+          PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO),
+        ]).then(
+          ([hasReadMediaImagesPermission, hasReadMediaVideoPermission]) =>
+            hasReadMediaImagesPermission && hasReadMediaVideoPermission,
+        );
+      } else {
+        return PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
+      }
+    };
+  
+    const hasPermission = await getCheckPermissionPromise();
+    if (hasPermission) {
+      return true;
+    }
+    const getRequestPermissionPromise = () => {
+      if (Platform.OS=="android" && Platform.Version >= 33) {
+        return PermissionsAndroid.requestMultiple([
+          PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+          PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO,
+        ]).then(
+          (statuses) =>
+            statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES] ===
+              PermissionsAndroid.RESULTS.GRANTED &&
+            statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO] ===
+              PermissionsAndroid.RESULTS.GRANTED,
+        );
+      } else {
+        return PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE).then((status) => status === PermissionsAndroid.RESULTS.GRANTED);
+      }
+    };
+  
+    return await getRequestPermissionPromise();
+  }
+
+  React.useEffect(() => {
+    (
+      async () => {
+        let has = await hasAndroidPermission();
+        console.log('hasAndroidPermission', has);
+      }
+    )()
+  },["text"])
   /*
   React.useEffect(() => {
     const eventEmitter = new NativeEventEmitter(NativeModules.RecyclerviewAndroidView);
@@ -42,7 +90,7 @@ export default function App() {
         contentUri: null, //'https://live.staticflickr.com/3469/3700376791_c5833828b3_b.jpg',
         width: now,
         title: null,
-        mediaType: 'image/jpeg',
+        mediaType:parseInt((Math.random()*100).toString())%i > 0 ? 'video' : 'photo',
         height: now,
       });
     }

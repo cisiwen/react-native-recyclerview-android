@@ -115,15 +115,15 @@ public class HomePage {
   public void  toggleSeledtionMode(boolean selecteMode) {
     dataAdaptor.toggleSelectionMode(selecteMode);
   }
-  public void loadGallery() {
+  public void loadGallery(SectionHeaderStyle headerStyle, Map<String,String> httpHeaders) {
     if (this.checkPermission()) {
       GetPhotoInput input = new GetPhotoInput();
       input.AssetType = "All";
-      input.First = 5000;
+      input.First = 10;
       GalleryAlbumProvider.getPhotos(input, this.context, new GalleryAlbumProvider.GetPhotoCallback() {
         @Override
         public void onResult(GetPhotoOutput result) {
-          dataAdaptor = new GalleryListRecylerviewDataAdaptor(recyclerView, result, null,null, (ReactContext) context);
+          dataAdaptor = new GalleryListRecylerviewDataAdaptor(recyclerView, result, headerStyle,httpHeaders, (ReactContext) context);
           recyclerView.setAdapter(dataAdaptor);
         }
       });
