@@ -17,9 +17,9 @@ export default function App() {
   let now = new Date().getTime().toString();
   let sections: SectionDataSource[] = [];
 
-  const  hasAndroidPermission= async ()=>{
+  const hasAndroidPermission = async () => {
     const getCheckPermissionPromise = () => {
-      if (Platform.OS=="android" && Platform.Version >= 33) {
+      if (Platform.OS == "android" && Platform.Version >= 33) {
         return Promise.all([
           PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES),
           PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO),
@@ -31,39 +31,41 @@ export default function App() {
         return PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
       }
     };
-  
+
     const hasPermission = await getCheckPermissionPromise();
     if (hasPermission) {
       return true;
     }
     const getRequestPermissionPromise = () => {
-      if (Platform.OS=="android" && Platform.Version >= 33) {
+      if (Platform.OS == "android" && Platform.Version >= 33) {
         return PermissionsAndroid.requestMultiple([
           PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
           PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO,
         ]).then(
           (statuses) =>
             statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES] ===
-              PermissionsAndroid.RESULTS.GRANTED &&
+            PermissionsAndroid.RESULTS.GRANTED &&
             statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO] ===
-              PermissionsAndroid.RESULTS.GRANTED,
+            PermissionsAndroid.RESULTS.GRANTED,
         );
       } else {
         return PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE).then((status) => status === PermissionsAndroid.RESULTS.GRANTED);
       }
     };
-  
+
     return await getRequestPermissionPromise();
   }
 
   React.useEffect(() => {
     (
       async () => {
-        let has = await hasAndroidPermission();
-        console.log('hasAndroidPermission', has);
+        if (Platform.OS == "android") {
+          let has = await hasAndroidPermission();
+          console.log('hasAndroidPermission', has);
+        }
       }
     )()
-  },["text"])
+  }, ["text"])
   /*
   React.useEffect(() => {
     const eventEmitter = new NativeEventEmitter(NativeModules.RecyclerviewAndroidView);
@@ -90,7 +92,7 @@ export default function App() {
         contentUri: null, //'https://live.staticflickr.com/3469/3700376791_c5833828b3_b.jpg',
         width: now,
         title: null,
-        mediaType:parseInt((Math.random()*100).toString())%i > 0 ? 'video' : 'photo',
+        mediaType: parseInt((Math.random() * 100).toString()) % i > 0 ? 'video' : 'photo',
         height: now,
       });
     }
@@ -139,7 +141,7 @@ export default function App() {
       {7 > 3 ? (
         <RecyclerviewAndroidView
           onLayout={(event: any) => {
-            console.log('onLayout',event.nativeEvent);
+            console.log('onLayout', event.nativeEvent);
           }}
           ref={(ref: React.ElementRef<typeof RecyclerviewAndroidView>) => {
             recyclerview = ref;
@@ -148,19 +150,19 @@ export default function App() {
           onItemPressed={onItemPressed}
           OnItemSelectStateChanged={onItemSelectStateChanged}
           onScrollBeginDrag={(event: any) => {
-            console.log('onScrollBeginDrag',event.nativeEvent);
+            console.log('onScrollBeginDrag', event.nativeEvent);
           }}
           onScroll={(event: any) => {
-            console.log('onScroll',event.nativeEvent);
+            console.log('onScroll', event.nativeEvent);
           }}
           onScrollEndDrag={(event: any) => {
-            console.log('onScrollEndDrag',event.nativeEvent);
+            console.log('onScrollEndDrag', event.nativeEvent);
           }}
           onContentSizeChange={(event: any) => {
-            console.log('onContentSizeChange',event.nativeEvent);
+            console.log('onContentSizeChange', event.nativeEvent);
           }}
           onVisibleItemsChange={(event: any) => {
-            console.log('onVisibleItemsChange',event.nativeEvent);
+            console.log('onVisibleItemsChange', event.nativeEvent);
           }}
           recyclerPropString={JSON.stringify(recyclerProps)}
           color="#32a852"

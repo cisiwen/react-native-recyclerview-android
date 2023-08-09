@@ -42,6 +42,39 @@ public class RNCollectionViewController:UICollectionViewController,UICollectionV
     public func getName()->String {
         return "Hello from swift";
     }
+    
+    
+    
+    @objc public func setRecyclerProps(recyclerProps:String)->Void {
+        let jsonDecoder = JSONDecoder();
+        do{
+            var allProps:RecyclerProps? = try jsonDecoder.decode(RecyclerProps.self, from: recyclerProps.data(using: .utf8)!);
+            if(allProps != nil){
+                if(allProps?.headerStyle != nil){
+                    headerStyle = SectionHeaderStyleSwift(style:allProps!.headerStyle);
+                }
+                if(allProps?.data != nil){
+                    data = allProps!.data;
+                    var totalIndex = 0;
+                    var sectionIndex = 0;
+                    data.forEach { section in
+                        var index=0;
+                        section.data.forEach { item in
+                            item.sectionIndex = sectionIndex;
+                            item.index = index;
+                            item.totalIndex = totalIndex;
+                            index+=1;
+                            totalIndex+=1;
+                        }
+                        sectionIndex+=1;
+                    }
+                }
+            }
+        } catch {
+            print(error.localizedDescription);
+        }
+    }
+    
     @objc public func setDataSourceString(dataSource: String,headerStyleString:String)->Void{
         NSLog("Your name is %@TESTING%lu", self.getName(), Int(Date().timeIntervalSince1970*1000));
         let jsonDecoder = JSONDecoder();

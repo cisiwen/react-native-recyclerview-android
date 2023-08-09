@@ -48,6 +48,12 @@ public class SectionHeaderStyle:Codable {
     }
 }
 
+public class RecyclerProps:Codable {
+    public var headerStyle:SectionHeaderStyle;
+    public var data:Array<SectionData>;
+    public var httpHeaders:Dictionary<String, String>;
+}
+
 public class CallbackAsset:Codable {
     public var  originalAsset:MediaItem;
     init(asset:MediaItem) {

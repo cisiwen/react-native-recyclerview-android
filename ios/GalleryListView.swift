@@ -13,6 +13,7 @@ class GalleryListView:UIView {
     @objc var onItemPressed:RCTDirectEventBlock? = nil;
     @objc var sectionHeaderStyle: NSString = "";
     @objc var dataSourceString: NSString = "";
+    @objc var recyclerPropString: NSString="";
     private var rnCollectionViewController:RNCollectionViewController?;
     override init(frame:CGRect) {
         super.init(frame: frame);
@@ -48,13 +49,14 @@ class GalleryListView:UIView {
     }
     
     override func didSetProps(_ changedProps: [String]!) {
-        if(changedProps.contains("dataSourceString")){
+        if(changedProps.contains("recyclerPropString")){
             if(rnCollectionViewController == nil) {
                 addCollectionView();
             }
             
             //requestPermission();
-            rnCollectionViewController?.setDataSourceString(dataSource: self.dataSourceString as String,headerStyleString: self.sectionHeaderStyle as String);
+            rnCollectionViewController?.setRecyclerProps(recyclerProps: self.recyclerPropString as String)
+            //(dataSource: self.dataSourceString as String,headerStyleString: self.sectionHeaderStyle as String);
         }
         
     }
