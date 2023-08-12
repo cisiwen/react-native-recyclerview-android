@@ -138,7 +138,7 @@ export default function App() {
     null;
   return (
     <View style={styles.container}>
-      {7 > 3 ? (
+      {5 > 3 ? (
         <RecyclerviewAndroidView
           onLayout={(event: any) => {
             console.log('onLayout', event.nativeEvent);
@@ -181,7 +181,7 @@ const styles = StyleSheet.create({
   box: {
     flex: 1,
     overflow: 'hidden',
-    backgroundColor: 'green',
+    backgroundColor: '#000',
     margin: 0,
   },
 });

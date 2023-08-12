@@ -27,6 +27,7 @@ public class RNCollectionViewController:UICollectionViewController,UICollectionV
         layout.headerReferenceSize = CGSize(width: self.collectionView.frame.size.width, height: 20);
         collectionView.frame = frame;
         collectionView.register(MediaItemCellView.self, forCellWithReuseIdentifier: "\(MediaItemCellView.self)");
+        collectionView.backgroundColor = .black;
         collectionView.register(MediaListHeaderCellView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "\(MediaListHeaderCellView.self)")
         setupLongGestureRecognizerOnCollection();
         setupOnPressGestureRecognizerOnCollection();

@@ -22,7 +22,7 @@ public class RNCollectioView:NSObject {
         let layout = UICollectionViewFlowLayout();
         layout.scrollDirection = .vertical;
         collectionView = UICollectionView(frame: frame, collectionViewLayout: layout);
-        //collectionView.backgroundColor = .white;
+        collectionView.backgroundColor = .black;
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell");
         return collectionView;
     }
