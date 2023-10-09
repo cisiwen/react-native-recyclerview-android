@@ -10,6 +10,7 @@ import android.util.Log;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.uimanager.ThemedReactContext;
@@ -34,10 +35,14 @@ public class HomePage {
   private ThemedReactContext context;
   private Activity activity;
 
-  public HomePage(RecyclerView recyclerView, ThemedReactContext context, Activity activity) {
+
+  private  SwipeRefreshLayout swipeRefreshLayout;
+
+  public HomePage(RecyclerView recyclerView,SwipeRefreshLayout swipeRefreshLayout, ThemedReactContext context, Activity activity) {
     this.recyclerView = recyclerView;
     this.context = context;
     this.activity = activity;
+    this.swipeRefreshLayout= swipeRefreshLayout;
   }
 
   public interface GetPhotoCallback {
@@ -106,7 +111,7 @@ public class HomePage {
         result.assets.add(oneMedia);
       }
     }
-    dataAdaptor = new GalleryListRecylerviewDataAdaptor(recyclerView, result,headerStyle, httpHeaders, (ReactContext) context);
+    dataAdaptor = new GalleryListRecylerviewDataAdaptor(swipeRefreshLayout, result,headerStyle, httpHeaders, (ReactContext) context);
     recyclerView.setAdapter(dataAdaptor);
   }
 
@@ -123,7 +128,7 @@ public class HomePage {
       GalleryAlbumProvider.getPhotos(input, this.context, new GalleryAlbumProvider.GetPhotoCallback() {
         @Override
         public void onResult(GetPhotoOutput result) {
-          dataAdaptor = new GalleryListRecylerviewDataAdaptor(recyclerView, result, headerStyle,httpHeaders, (ReactContext) context);
+          dataAdaptor = new GalleryListRecylerviewDataAdaptor(swipeRefreshLayout, result, headerStyle,httpHeaders, (ReactContext) context);
           recyclerView.setAdapter(dataAdaptor);
         }
       });

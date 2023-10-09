@@ -91,7 +91,7 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
     Long tick = now.getTime();
     Object one = dataSource.toArrayList().get(0);
     Log.i("setDataSource", String.format("%s-%s", tick, one.toString()));
-    homePage = new HomePage(this.verticalRecyclerView, this.context, this.context.getCurrentActivity());
+    homePage = new HomePage(this.verticalRecyclerView,this.swipeRefreshLayout, this.context, this.context.getCurrentActivity());
     homePage.loadGallery(style,httpHeaders);
   }
 
@@ -106,7 +106,7 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
     //ObjectMapper mapper = new ObjectMapper();
 
     Log.i("setDataSourceString", String.format("%s-%s", tick, sources.size()));
-    homePage = new HomePage(this.verticalRecyclerView, this.context, this.context.getCurrentActivity());
+    homePage = new HomePage(this.verticalRecyclerView,this.swipeRefreshLayout, this.context, this.context.getCurrentActivity());
     homePage.setDataSourceMedia(sources, style,httpHeaders);
   }
 
@@ -126,7 +126,7 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
     Type props = new TypeToken<ReactRecyclerProps>() {
     }.getType();
     this.props = new Gson().fromJson(recyclerProps, props);
-    homePage = new HomePage(this.verticalRecyclerView, this.context, this.context.getCurrentActivity());
+    homePage = new HomePage(this.verticalRecyclerView,this.swipeRefreshLayout, this.context, this.context.getCurrentActivity());
     homePage.setDataSourceMedia(this.props.data,this.props.headerStyle,this.props.httpHeaders);
     //homePage.loadGallery(style,httpHeaders);
   }
