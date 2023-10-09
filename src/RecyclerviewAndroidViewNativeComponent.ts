@@ -48,6 +48,7 @@ interface NativeProps extends ViewProps {
   dataSource?: Array<Asset>;
   httpHeadersString?: string;
   recyclerPropString?:string;
+  OnRefreshing: DirectEventHandler<any>;
   onLongPressed: DirectEventHandler<OnPageSelectedEventData>;
   onItemPressed: DirectEventHandler<OnPageSelectedEventData>;
   OnItemSelectStateChanged: DirectEventHandler<OnPageSelectedEventData>;
@@ -65,12 +66,22 @@ export interface NativeCommands {
     viewRef: React.ElementRef<RecyclerviewAndroidViewType>,
     selectionMode: boolean
   ) => void;
+  onRefreshEnd: (
+    viewRef: React.ElementRef<RecyclerviewAndroidViewType>,
+    refreshing: boolean
+  ) => void;
+  updateDataSource: (
+    viewRef: React.ElementRef<RecyclerviewAndroidViewType>,
+    dataSource: string
+  ) => void;
 }
 
 
 export const Commands: NativeCommands = codegenNativeCommands<NativeCommands>({
   supportedCommands: [
-    'toggleSelectionMode' 
+    'toggleSelectionMode',
+    'onRefreshEnd',
+    'updateDataSource'
   ],
 });
 //export const ZoomableImageView = codegenNativeComponent<NativeProps>("ZoomableImageView");

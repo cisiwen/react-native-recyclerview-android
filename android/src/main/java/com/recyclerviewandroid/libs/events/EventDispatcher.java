@@ -25,6 +25,11 @@ public class EventDispatcher {
     );
   }
 
+  public  static  void sendOnRefreshingEvent(ReactContext reactContext, int viewTag){
+    UIManagerHelper.getEventDispatcherForReactTag(reactContext, viewTag).dispatchEvent(
+      new OnRefreshingEvent(viewTag)
+    );
+  }
   public static void sendItemOnPress(ReactContext reactContext, int viewTag, Asset asset) {
     //reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(ON_ITEM_LONG_PRESS,"TESTING");
 

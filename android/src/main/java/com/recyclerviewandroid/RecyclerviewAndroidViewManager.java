@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 
 import androidx.annotation.Nullable;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.common.MapBuilder;
@@ -16,9 +17,11 @@ import com.facebook.react.views.scroll.ScrollEventType;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.recyclerviewandroid.libs.domain.SectionHeaderStyle;
+import com.recyclerviewandroid.libs.events.EventDispatcher;
 import com.recyclerviewandroid.libs.events.LongPressEvent;
 import com.recyclerviewandroid.libs.events.OnItemSelectStateChangedEvent;
 import com.recyclerviewandroid.libs.events.OnPressEvent;
+import com.recyclerviewandroid.libs.events.OnRefreshingEvent;
 import com.recyclerviewandroid.libs.events.VisibleItemsChangeEvent;
 import com.recyclerviewandroid.libs.javascript.ReactRecyclerProps;
 import com.recyclerviewandroid.libs.javascript.ReactSectionDataSource;
@@ -30,11 +33,14 @@ import java.util.List;
 import java.util.Map;
 
 @ReactModule(name = RecyclerviewAndroidViewManager.NAME)
-public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.RecyclerviewAndroidViewManagerSpec<RecyclerviewAndroidView> {
+public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.RecyclerviewAndroidViewManagerSpec<SwipeRefreshLayout> {
 
   public static final String NAME = "GalleryListView";
 
   public static final String CMD_TOGGLE_SELECTION_MODE = "toggleSelectionMode";
+  public  static final String CMD_ONREFRESHING_END="onRefreshEnd";
+
+  public  static final String CMD_UPDATE_DATA="updateDataSource";
 
   private SectionHeaderStyle style;
 
@@ -49,35 +55,49 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
     return NAME;
   }
 
+  private RecyclerviewAndroidView verticalRecyclerView;
+
+
+  private  SwipeRefreshLayout  swipeRefreshLayout;
+
+  public SwipeRefreshLayout.OnRefreshListener refreshListener = new SwipeRefreshLayout.OnRefreshListener() {
+
+    @Override
+    public void onRefresh() {
+      swipeRefreshLayout.setRefreshing(true);
+      EventDispatcher.sendOnRefreshingEvent(context,swipeRefreshLayout.getId());
+    }
+  };
   @Override
-  public RecyclerviewAndroidView createViewInstance(ThemedReactContext context) {
+  public SwipeRefreshLayout createViewInstance(ThemedReactContext context) {
     this.context = context;
-    //RecyclerviewAndroidView verticalRecyclerView = (RecyclerviewAndroidView) LayoutInflater.from(context).inflate(R.layout.recyclerviewandroidview,null);
-    RecyclerviewAndroidView verticalRecyclerView = new RecyclerviewAndroidView(context);
-    return verticalRecyclerView;
+    this.swipeRefreshLayout = (SwipeRefreshLayout) LayoutInflater.from(context).inflate(R.layout.recyclerviewandroidview,null);
+    this.swipeRefreshLayout.setOnRefreshListener(refreshListener);
+    verticalRecyclerView = this.swipeRefreshLayout.findViewById(R.id.vertical_recyclerview);
+    return this.swipeRefreshLayout;
   }
 
   @Override
   @ReactProp(name = "color")
-  public void setColor(RecyclerviewAndroidView view, @Nullable String color) {
+  public void setColor(SwipeRefreshLayout view, @Nullable String color) {
     view.setBackgroundColor(Color.parseColor(color));
   }
 
 
   @Override
   @ReactProp(name = "dataSource")
-  public void setDataSource(RecyclerviewAndroidView view, @Nullable ReadableArray dataSource) {
+  public void setDataSource(SwipeRefreshLayout view, @Nullable ReadableArray dataSource) {
     Date now = new Date();
     Long tick = now.getTime();
     Object one = dataSource.toArrayList().get(0);
     Log.i("setDataSource", String.format("%s-%s", tick, one.toString()));
-    homePage = new HomePage(view, this.context, this.context.getCurrentActivity());
+    homePage = new HomePage(this.verticalRecyclerView, this.context, this.context.getCurrentActivity());
     homePage.loadGallery(style,httpHeaders);
   }
 
   @Override
   @ReactProp(name = "dataSourceString")
-  public void setDataSourceString(RecyclerviewAndroidView view, @Nullable String dataSource) {
+  public void setDataSourceString(SwipeRefreshLayout view, @Nullable String dataSource) {
     Type listmedia = new TypeToken<List<ReactSectionDataSource>>() {
     }.getType();
     List<ReactSectionDataSource> sources = new Gson().fromJson(dataSource, listmedia);
@@ -86,13 +106,13 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
     //ObjectMapper mapper = new ObjectMapper();
 
     Log.i("setDataSourceString", String.format("%s-%s", tick, sources.size()));
-    homePage = new HomePage(view, this.context, this.context.getCurrentActivity());
+    homePage = new HomePage(this.verticalRecyclerView, this.context, this.context.getCurrentActivity());
     homePage.setDataSourceMedia(sources, style,httpHeaders);
   }
 
   @Override
   @ReactProp(name = "httpHeadersString")
-  public void setHttpHeaders(RecyclerviewAndroidView view, @Nullable String httpHeaders) {
+  public void setHttpHeaders(SwipeRefreshLayout view, @Nullable String httpHeaders) {
     if (httpHeaders != null) {
       Type headerType = new TypeToken<Map<String,String>>(){}.getType();
       this.httpHeaders = new Gson().fromJson(httpHeaders,headerType);
@@ -102,18 +122,18 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
 
   @Override
   @ReactProp(name = "recyclerPropString")
-  public void setReactRecyclerProps(RecyclerviewAndroidView view, @Nullable String recyclerProps) {
+  public void setReactRecyclerProps(SwipeRefreshLayout view, @Nullable String recyclerProps) {
     Type props = new TypeToken<ReactRecyclerProps>() {
     }.getType();
     this.props = new Gson().fromJson(recyclerProps, props);
-    homePage = new HomePage(view, this.context, this.context.getCurrentActivity());
+    homePage = new HomePage(this.verticalRecyclerView, this.context, this.context.getCurrentActivity());
     homePage.setDataSourceMedia(this.props.data,this.props.headerStyle,this.props.httpHeaders);
     //homePage.loadGallery(style,httpHeaders);
   }
 
   @Override
   @ReactProp(name = "sectionHeaderStyle")
-  public void setSectionHeaderStyle(RecyclerviewAndroidView view, @Nullable String headerStyle) {
+  public void setSectionHeaderStyle(SwipeRefreshLayout view, @Nullable String headerStyle) {
     Log.i("setSectionHeaderStyle", headerStyle);
     Type sectionHeaderStyle = new TypeToken<SectionHeaderStyle>() {
     }.getType();
@@ -129,23 +149,35 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
       .put(ScrollEventType.getJSEventName(ScrollEventType.SCROLL), MapBuilder.of("registrationName", "onScroll"))
       .put(ScrollEventType.getJSEventName(ScrollEventType.END_DRAG), MapBuilder.of("registrationName", "onScrollEndDrag"))
       .put(VisibleItemsChangeEvent.EVENT_NAME, MapBuilder.of("registrationName", "onVisibleItemsChange"))
+      .put(OnRefreshingEvent.EVENT_NAME,MapBuilder.of("registrationName", "OnRefreshing"))
       .put(ContentSizeChangeEvent.EVENT_NAME, MapBuilder.of("registrationName", "onContentSizeChange")).build();
   }
 
   @Override
   public Map getCommandsMap() {
-    return MapBuilder.of(
-      "toggleSelectionMode", CMD_TOGGLE_SELECTION_MODE
-    );
+    return MapBuilder.builder()
+      .put("toggleSelectionMode", CMD_TOGGLE_SELECTION_MODE)
+      .put("onRefreshEnd",CMD_ONREFRESHING_END)
+      .put("updateDataSource",CMD_UPDATE_DATA)
+      .build();
   }
 
   @Override
-  public void receiveCommand(final RecyclerviewAndroidView parent, String commandType, @Nullable ReadableArray args) {
+  public void receiveCommand(final SwipeRefreshLayout parent, String commandType, @Nullable ReadableArray args) {
     Log.i("receiveCommand", commandType);
     switch (commandType) {
       case CMD_TOGGLE_SELECTION_MODE:
         boolean selectMode = args.getBoolean(0);
         homePage.toggleSeledtionMode(selectMode);
+        break;
+      case CMD_ONREFRESHING_END:
+        boolean ended=args.getBoolean(0);
+        swipeRefreshLayout.setRefreshing(!ended);
+        break;
+      case CMD_UPDATE_DATA:
+        String dataSource = args.getString(0);
+        setReactRecyclerProps(swipeRefreshLayout,dataSource);
+        swipeRefreshLayout.setRefreshing(false);
         break;
     }
   }

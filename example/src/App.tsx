@@ -99,6 +99,29 @@ export default function App() {
     sections.push(section);
   }
 
+  const refreshNewData = () => {
+    let updateSections: SectionDataSource[] = [];
+    let section: SectionDataSource = {
+      sectionTitle: `Gallery section ${sections.length}`,
+      sectionId: sections.length.toString(),
+      data: [],
+    };
+    for (let i = 0; i < 50; i++) {
+      section.data.push({
+        contentId: `${i}`,
+        uri:'https://4.img-dpreview.com/files/p/TS1200x900~sample_galleries/1330372094/7004100121.jpg',
+        contentUri: null, //'https://live.staticflickr.com/3469/3700376791_c5833828b3_b.jpg',
+        width: now,
+        title: null,
+        mediaType: parseInt((Math.random() * 100).toString()) % i > 0 ? 'video' : 'photo',
+        height: now,
+      });
+    }
+    updateSections.push(section);
+    console.log('refreshNewData', sections.length);
+    Commands.updateDataSource(recyclerview, JSON.stringify(updateSections));
+  }
+
   const onLongPressed = (e: PagerViewOnPageSelectedEvent) => {
     console.log('onLongPressed', e.nativeEvent);
   };
@@ -145,6 +168,10 @@ export default function App() {
           }}
           ref={(ref: React.ElementRef<typeof RecyclerviewAndroidView>) => {
             recyclerview = ref;
+          }}
+          OnRefreshing={(data:any) => {
+            console.log('OnRefreshing', data.nativeEvent);
+            refreshNewData();
           }}
           onLongPressed={onLongPressed}
           onItemPressed={onItemPressed}
