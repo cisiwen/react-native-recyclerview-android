@@ -89,15 +89,16 @@ public class HomePage {
     int id = 0;
     for (ReactSectionDataSource temp : media) {
       id++;
-      Asset header = new Asset();
-      header.type = "Header";
-      header.group_name = temp.sectionTitle;
-      header.group_id = new Long(id);
-      header.originalSection = new ReactSectionDataSource();
-      header.originalSection.sectionId = temp.sectionId;
-      header.originalSection.sectionTitle = temp.sectionTitle;
-      result.assets.add(header);
-
+      if(temp.sectionTitle!=null && temp.sectionTitle.length()>0) {
+        Asset header = new Asset();
+        header.type = "Header";
+        header.group_name = temp.sectionTitle;
+        header.group_id = new Long(id);
+        header.originalSection = new ReactSectionDataSource();
+        header.originalSection.sectionId = temp.sectionId;
+        header.originalSection.sectionTitle = temp.sectionTitle;
+        result.assets.add(header);
+      }
 
       for (ReactAsset asset : temp.data) {
         id++;
