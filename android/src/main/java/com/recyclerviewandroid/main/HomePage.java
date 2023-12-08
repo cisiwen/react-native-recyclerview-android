@@ -21,7 +21,9 @@ import com.recyclerviewandroid.libs.domain.GetPhotoOutput;
 import com.recyclerviewandroid.libs.domain.Image;
 import com.recyclerviewandroid.libs.domain.Media;
 import com.recyclerviewandroid.libs.domain.SectionHeaderStyle;
+import com.recyclerviewandroid.libs.domain.TopHeaderItem;
 import com.recyclerviewandroid.libs.javascript.ReactAsset;
+import com.recyclerviewandroid.libs.javascript.ReactRecyclerProps;
 import com.recyclerviewandroid.libs.javascript.ReactSectionDataSource;
 
 import java.util.ArrayList;
@@ -83,7 +85,7 @@ public class HomePage {
     return false;
   }
 
-  public void setDataSourceMedia(List<ReactSectionDataSource> media, SectionHeaderStyle headerStyle, Map<String,String> httpHeaders) {
+  public void setDataSourceMedia(List<ReactSectionDataSource> media, SectionHeaderStyle headerStyle, Map<String,String> httpHeaders, TopHeaderItem topHeaderItem) {
     GetPhotoOutput result = new GetPhotoOutput();
     result.assets = new ArrayList<Asset>();
     int id = 0;
@@ -113,6 +115,51 @@ public class HomePage {
       }
     }
     dataAdaptor = new GalleryListRecylerviewDataAdaptor(swipeRefreshLayout, result,headerStyle, httpHeaders, (ReactContext) context);
+    recyclerView.setAdapter(dataAdaptor);
+  }
+
+  public void setDataSourceMedia(ReactRecyclerProps props) {
+    GetPhotoOutput result = new GetPhotoOutput();
+    result.assets = new ArrayList<Asset>();
+    int id = 0;
+
+    if(props.topHeaderItem!=null) {
+      Asset topHeader = new Asset();
+      topHeader.type="TopHeader";
+      topHeader.group_id=new Long(-999);
+      topHeader.image = new Image();
+      topHeader.image.imageUri = Uri.parse(props.topHeaderItem.imageUri);
+      topHeader.group_name = props.topHeaderItem.title;
+      topHeader.topHeaderItem = props.topHeaderItem;
+      result.assets.add(topHeader);
+    }
+
+    for (ReactSectionDataSource temp : props.data) {
+      id++;
+      if(temp.sectionTitle!=null && temp.sectionTitle.length()>0) {
+        Asset header = new Asset();
+        header.type = "Header";
+        header.group_name = temp.sectionTitle;
+        header.group_id = new Long(id);
+        header.originalSection = new ReactSectionDataSource();
+        header.originalSection.sectionId = temp.sectionId;
+        header.originalSection.sectionTitle = temp.sectionTitle;
+        result.assets.add(header);
+      }
+
+      for (ReactAsset asset : temp.data) {
+        id++;
+        Asset oneMedia = new Asset();
+        oneMedia.type = "IMAGE";
+        oneMedia.image = new Image();
+        oneMedia.image.imageId = new Long(id);
+        oneMedia.image.imageUri = Uri.parse(asset.uri);
+        oneMedia.originalAsset = asset;
+        //oneMedia.image.imageId= asset.contentId;
+        result.assets.add(oneMedia);
+      }
+    }
+    dataAdaptor = new GalleryListRecylerviewDataAdaptor(swipeRefreshLayout, result,props.headerStyle, props.httpHeaders, (ReactContext) context);
     recyclerView.setAdapter(dataAdaptor);
   }
 

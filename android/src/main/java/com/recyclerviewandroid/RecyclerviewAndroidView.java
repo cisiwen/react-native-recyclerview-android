@@ -43,17 +43,18 @@ public class RecyclerviewAndroidView extends RecyclerView {
 
 
   public RecyclerviewAndroidView(Context context, @Nullable AttributeSet attrs) {
-    super(new ContextThemeWrapper(context, R.style.ScrollbarRecyclerView),attrs);
-    ((DefaultItemAnimator)getItemAnimator()).setSupportsChangeAnimations(false);
-    GridLayoutManager layoutManager = new GridLayoutManager(context,4);
+    super(new ContextThemeWrapper(context, R.style.ScrollbarRecyclerView), attrs);
+    ((DefaultItemAnimator) getItemAnimator()).setSupportsChangeAnimations(false);
+    GridLayoutManager layoutManager = new GridLayoutManager(context, 4);
     layoutManager.setSmoothScrollbarEnabled(true);
     //this.setScrollbarFadingEnabled(false);
     //this.setHasFixedSize(true);
     setLayoutManager(layoutManager);
-    layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup(){
+    layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
       @Override
       public int getSpanSize(int position) {
-        return  getAdapter().getItemViewType(position)==1 ? 4: 1;
+        int viewType = getAdapter().getItemViewType(position);
+        return (viewType == GalleryListRecylerviewDataAdaptor.VIEWTYPE_TOPHEADER_FULL || viewType == GalleryListRecylerviewDataAdaptor.VIEWTYPE_TOPHEADER || viewType == GalleryListRecylerviewDataAdaptor.VIEWTYPE_HEADER) ? 4 : 1;
       }
     });
 

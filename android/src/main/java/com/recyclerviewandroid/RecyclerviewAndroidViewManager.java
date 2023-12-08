@@ -1,16 +1,19 @@
 package com.recyclerviewandroid;
 
-import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.common.MapBuilder;
 import com.facebook.react.module.annotations.ReactModule;
+import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
+import com.facebook.react.uimanager.ViewGroupManager;
 import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.ContentSizeChangeEvent;
 import com.facebook.react.views.scroll.ScrollEventType;
@@ -33,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 @ReactModule(name = RecyclerviewAndroidViewManager.NAME)
-public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.RecyclerviewAndroidViewManagerSpec<SwipeRefreshLayout> {
+public class RecyclerviewAndroidViewManager extends SimpleViewManager {
 
   public static final String NAME = "GalleryListView";
 
@@ -77,14 +80,14 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
     return this.swipeRefreshLayout;
   }
 
-  @Override
+
+
   @ReactProp(name = "color")
   public void setColor(SwipeRefreshLayout view, @Nullable String color) {
-    view.setBackgroundColor(Color.parseColor(color));
+    //view.setBackgroundColor(Color.parseColor(color));
   }
 
 
-  @Override
   @ReactProp(name = "dataSource")
   public void setDataSource(SwipeRefreshLayout view, @Nullable ReadableArray dataSource) {
     Date now = new Date();
@@ -95,7 +98,7 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
     homePage.loadGallery(style,httpHeaders);
   }
 
-  @Override
+
   @ReactProp(name = "dataSourceString")
   public void setDataSourceString(SwipeRefreshLayout view, @Nullable String dataSource) {
     Type listmedia = new TypeToken<List<ReactSectionDataSource>>() {
@@ -107,10 +110,10 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
 
     Log.i("setDataSourceString", String.format("%s-%s", tick, sources.size()));
     homePage = new HomePage(this.verticalRecyclerView,this.swipeRefreshLayout, this.context, this.context.getCurrentActivity());
-    homePage.setDataSourceMedia(sources, style,httpHeaders);
+    homePage.setDataSourceMedia(sources, style,httpHeaders,null);
   }
 
-  @Override
+
   @ReactProp(name = "httpHeadersString")
   public void setHttpHeaders(SwipeRefreshLayout view, @Nullable String httpHeaders) {
     if (httpHeaders != null) {
@@ -120,18 +123,18 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
   }
 
 
-  @Override
+
   @ReactProp(name = "recyclerPropString")
   public void setReactRecyclerProps(SwipeRefreshLayout view, @Nullable String recyclerProps) {
     Type props = new TypeToken<ReactRecyclerProps>() {
     }.getType();
     this.props = new Gson().fromJson(recyclerProps, props);
     homePage = new HomePage(this.verticalRecyclerView,this.swipeRefreshLayout, this.context, this.context.getCurrentActivity());
-    homePage.setDataSourceMedia(this.props.data,this.props.headerStyle,this.props.httpHeaders);
+    homePage.setDataSourceMedia(this.props);
     //homePage.loadGallery(style,httpHeaders);
   }
 
-  @Override
+
   @ReactProp(name = "sectionHeaderStyle")
   public void setSectionHeaderStyle(SwipeRefreshLayout view, @Nullable String headerStyle) {
     Log.i("setSectionHeaderStyle", headerStyle);
@@ -162,7 +165,7 @@ public class RecyclerviewAndroidViewManager extends com.recyclerviewandroid.Recy
       .build();
   }
 
-  @Override
+
   public void receiveCommand(final SwipeRefreshLayout parent, String commandType, @Nullable ReadableArray args) {
     Log.i("receiveCommand", commandType);
     switch (commandType) {

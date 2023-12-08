@@ -4,6 +4,8 @@ import com.recyclerviewandroid.libs.javascript.ReactAsset;
 import com.recyclerviewandroid.libs.javascript.ReactSectionDataSource;
 
 public class Asset {
+
+    public  TopHeaderItem topHeaderItem;
     public  Image image;
     public  String type;
     public  String group_name;

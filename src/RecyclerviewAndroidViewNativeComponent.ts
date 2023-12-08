@@ -32,6 +32,29 @@ export type SectionHeaderStyle = {
   FontWeight:number;
 }
 
+export type TopHeaderItemStyle = {
+  titleColor:string;
+  subTitleColor:string;
+  linkTextColor:string;
+  titleFontSize:number;
+  subTitleFontSize:number;
+  linkTextFontSize:number;
+}
+export enum TopHeaderTemplate {
+  face="face",
+  full="full"
+}
+export type TopHeaderItem={
+  imageUri:string;
+  title:string;
+  subTitle:string;
+  linkText:string;
+  style:TopHeaderItemStyle;
+  topHeaderTemplate:TopHeaderTemplate;
+}
+
+
+
 export type MediaHttpHeaders={[key:string]:string};
 
 
@@ -39,6 +62,7 @@ export type RecyclerProps={
   data:SectionDataSource[];
   headerStyle:SectionHeaderStyle;
   httpHeaders:MediaHttpHeaders;
+  topHeaderItem:TopHeaderItem;
 }
 
 interface NativeProps extends ViewProps {

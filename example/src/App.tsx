@@ -6,11 +6,12 @@ import {
   RecyclerviewAndroidView,
   SectionDataSource,
   SectionHeaderStyle,
+  TopHeaderTemplate,
   Commands,
 } from '@cisiwen/react-native-recyclerview-android';
 import type {
   MediaHttpHeaders,
-  RecyclerProps,
+  RecyclerProps
 } from '@cisiwen/react-native-recyclerview-android';
 
 export default function App() {
@@ -76,13 +77,13 @@ export default function App() {
      eventListener.remove();
    }
   }, []);*/
-  for (let s = 0; s < 200; s++) {
+  for (let s = 0; s < 5; s++) {
     let section: SectionDataSource = {
       sectionTitle: `Gallery section ${s}`,
       sectionId: s.toString(),
       data: [],
     };
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 10; i++) {
       section.data.push({
         contentId: `${i}`,
         uri:
@@ -156,6 +157,15 @@ export default function App() {
     headerStyle: sectionHeaderStyle,
     httpHeaders: httpHeaders,
     data: sections,
+    topHeaderItem:{
+      imageUri:"https://live.staticflickr.com/3469/3700376791_c5833828b3_b.jpg",
+      title:'Top Header',
+      subTitle:"6323 photos",
+      linkText:"View all",
+      style:null,
+      topHeaderTemplate:TopHeaderTemplate.full
+    }
+    
   };
   let recyclerview: React.ElementRef<typeof RecyclerviewAndroidView> | null =
     null;
@@ -194,7 +204,8 @@ export default function App() {
           recyclerPropString={JSON.stringify(recyclerProps)}
           color="#32a852"
           style={styles.box}
-        />
+        >
+        </RecyclerviewAndroidView>
       ) : null}
     </View>
   );

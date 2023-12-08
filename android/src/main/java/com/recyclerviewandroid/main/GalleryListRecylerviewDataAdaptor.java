@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompatSideChannelService;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -43,6 +44,8 @@ import com.recyclerviewandroid.R;
 import com.recyclerviewandroid.libs.domain.Asset;
 import com.recyclerviewandroid.libs.domain.GetPhotoOutput;
 import com.recyclerviewandroid.libs.domain.SectionHeaderStyle;
+import com.recyclerviewandroid.libs.domain.TopHeaderItemStyle;
+import com.recyclerviewandroid.libs.domain.TopHeaderTemplate;
 import com.recyclerviewandroid.libs.events.EventDispatcher;
 
 import java.io.IOException;
@@ -59,6 +62,9 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
 
 
   public static  int VIEWTYPE_HEADER=1;
+
+  public  static  int VIEWTYPE_TOPHEADER=4;
+  public  static  int VIEWTYPE_TOPHEADER_FULL=5;
   public static int VIEWTYPE_PHOTO=0;
   public static int VIEWTYPE_VIDEO=2;
   private static final String TAG = "GalleryListDataAdaptor";
@@ -87,7 +93,15 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
   @Override
   public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     View v;
-    if (viewType == VIEWTYPE_HEADER) {
+    if(viewType == VIEWTYPE_TOPHEADER) {
+      v = LayoutInflater.from(parent.getContext())
+        .inflate(R.layout.top_header_item, parent, false);
+    }
+    else if(viewType == VIEWTYPE_TOPHEADER_FULL) {
+      v = LayoutInflater.from(parent.getContext())
+        .inflate(R.layout.top_header_item_full_image, parent, false);
+    }
+    else if (viewType == VIEWTYPE_HEADER) {
       v = LayoutInflater.from(parent.getContext())
         .inflate(R.layout.list_section_header, parent, false);
       this.setSectionHeaderStyle(v, this.headerStyle);
@@ -145,7 +159,7 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
   @Override
   public long getItemId(int position) {
     Asset asset = this.photos.assets.get(position);
-    return asset.type == "Header" ? asset.group_id : asset.image.imageId;
+    return asset.type == "Header" || asset.type=="TopHeader" ? asset.group_id : asset.image.imageId;
   }
 
   @Override
@@ -204,6 +218,12 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
     Asset asset = this.photos.assets.get(position);
     if (asset.type == "Header") {
       return VIEWTYPE_HEADER;
+    } else if (asset.type == "TopHeader") {
+      if (asset.topHeaderItem.topHeaderTemplate == TopHeaderTemplate.face) {
+        return VIEWTYPE_TOPHEADER;
+      } else {
+        return VIEWTYPE_TOPHEADER_FULL;
+      }
     } else if (asset.originalAsset.mediaType.equals("video")) {
       return VIEWTYPE_VIDEO;
     } else {
@@ -218,8 +238,12 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
   public static class ViewHolder extends RecyclerView.ViewHolder {
 
 
+    ImageView topHeaderImageView = null;
     ImageView imageView = null;
     TextView headerTextView = null;
+
+    TextView headerSubTextView = null;
+    TextView headerLinkTextView = null;
     CheckBox checkBox = null;
     RelativeLayout controlContainer;
     BitmapFactory.Options options;
@@ -241,6 +265,9 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
       checkBox = itemView.findViewById(R.id.list_item_checkbox);
       controlContainer = itemView.findViewById(R.id.list_item_control_container);
       playButton = itemView.findViewById(R.id.list_item_play_button);
+      headerLinkTextView = itemView.findViewById(R.id.header_link_title);
+      headerSubTextView = itemView.findViewById(R.id.header_sub_title);
+      //topHeaderImageView = itemView.findViewById(R.id.top_header_list_item_imageview);
       options = new BitmapFactory.Options();
       initializeViewHolder();
     }
@@ -320,8 +347,44 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
         } else {
           Glide.with(context).asBitmap().load(asset.image.imageUri.toString()).into(imageView);
         }
-      } else if (asset.type == "Header") {
+      }
+      if (headerTextView != null && asset.group_name != null) {
         headerTextView.setText(asset.group_name);
+      }
+      if (asset.topHeaderItem != null) {
+        TopHeaderItemStyle style = asset.topHeaderItem.style;
+
+        if(style.titleColor!=null) {
+            headerTextView.setTextColor(Color.parseColor(style.titleColor));
+        }
+        if(style.titleFontSize>0) {
+          headerTextView.setTextSize(style.titleFontSize);
+        }
+
+        if (headerSubTextView != null) {
+          headerSubTextView.setText(asset.topHeaderItem.subTitle);
+          if(style.subTitleColor!=null) {
+            headerSubTextView.setTextColor(Color.parseColor(style.subTitleColor));
+          }
+          if(style.subTitleFontSize>0) {
+            headerSubTextView.setTextSize(style.subTitleFontSize);
+          }
+        }
+        else {
+          headerSubTextView.setVisibility(View.GONE);
+        }
+        if (headerLinkTextView != null) {
+          headerLinkTextView.setText(asset.topHeaderItem.linkText);
+          if(style.linkTextColor!=null) {
+            headerLinkTextView.setTextColor(Color.parseColor(style.linkTextColor));
+          }
+          if(style.titleFontSize>0) {
+            headerLinkTextView.setTextSize(style.linkTextFontSize);
+          }
+        }
+        else {
+          headerLinkTextView.setVisibility(View.GONE);
+        }
       }
     }
 
