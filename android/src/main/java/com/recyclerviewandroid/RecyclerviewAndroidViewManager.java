@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 @ReactModule(name = RecyclerviewAndroidViewManager.NAME)
-public class RecyclerviewAndroidViewManager extends SimpleViewManager {
+public class RecyclerviewAndroidViewManager extends RecyclerviewAndroidViewManagerSpec<SwipeRefreshLayout> {
 
   public static final String NAME = "GalleryListView";
 
@@ -165,7 +165,7 @@ public class RecyclerviewAndroidViewManager extends SimpleViewManager {
       .build();
   }
 
-
+  @Override
   public void receiveCommand(final SwipeRefreshLayout parent, String commandType, @Nullable ReadableArray args) {
     Log.i("receiveCommand", commandType);
     switch (commandType) {

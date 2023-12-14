@@ -1,5 +1,6 @@
 package com.recyclerviewandroid.main;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.NotificationCompatSideChannelService;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -79,12 +81,14 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
   ReactContext reactContext;
   View view;
 
-  public GalleryListRecylerviewDataAdaptor(View view, GetPhotoOutput photos, SectionHeaderStyle headerStyle, Map<String, String> httpHeaders, ReactContext reactContext) {
+  RecyclerView recyclerView;
+  public GalleryListRecylerviewDataAdaptor(View view,RecyclerView recyclerView, GetPhotoOutput photos, SectionHeaderStyle headerStyle, Map<String, String> httpHeaders, ReactContext reactContext) {
     this.photos = photos;
     this.reactContext = reactContext;
     this.view = view;
     this.headerStyle = headerStyle;
     this.httpHeaders = httpHeaders;
+    this.recyclerView = recyclerView;
     this.setHasStableIds(true);
 
   }
@@ -238,6 +242,7 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
   public static class ViewHolder extends RecyclerView.ViewHolder {
 
 
+    ConstraintLayout rootLayout;
     ImageView topHeaderImageView = null;
     ImageView imageView = null;
     TextView headerTextView = null;
@@ -253,6 +258,7 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
     Boolean isInSelectionMode = false;
 
     ImageButton playButton;
+    RelativeLayout list_item_wrapper;
     Asset asset = null;
 
 
@@ -267,8 +273,12 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
       playButton = itemView.findViewById(R.id.list_item_play_button);
       headerLinkTextView = itemView.findViewById(R.id.header_link_title);
       headerSubTextView = itemView.findViewById(R.id.header_sub_title);
+
+      rootLayout = itemView.findViewById(R.id.photo_list_item);
+      list_item_wrapper = itemView.findViewById(R.id.list_item_wrapper);
       //topHeaderImageView = itemView.findViewById(R.id.top_header_list_item_imageview);
       options = new BitmapFactory.Options();
+
       initializeViewHolder();
     }
 
@@ -301,12 +311,52 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
           @Override
           public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
             adaptor.onSingleItemSelectChanged(b, asset);
+            toggleSelectedStatus(asset,true);
           }
         });
       }
     }
 
 
+    public  void animatedPadding(View sender, int startValue, int endValue){
+      ValueAnimator animator = ValueAnimator.ofInt(startValue, endValue);
+      animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener()
+      {
+        @Override
+        public void onAnimationUpdate(ValueAnimator valueAnimator){
+          int newValue = (Integer) valueAnimator.getAnimatedValue();
+          sender.setPadding(newValue,newValue,newValue,newValue);
+        }
+      });
+      animator.setDuration(200);
+      animator.start();
+    }
+
+    public  void toggleSelectedStatus(Asset asset,boolean animated){
+      if(this.isInSelectionMode) {
+        if (list_item_wrapper != null) {
+          //ViewGroup.MarginLayoutParams marginParams =(ViewGroup.MarginLayoutParams)imageView.getLayoutParams();
+          int margin = asset.selected ? 40 : 0;
+          int startValue = asset.selected ? 0: 40;
+          //marginParams.setMargins(margin,margin,margin,margin);
+          if(!animated) {
+            list_item_wrapper.setPadding(margin, margin, margin, margin);
+            list_item_wrapper.invalidate();
+          }
+          else {
+            animatedPadding(list_item_wrapper, startValue, margin);
+          }
+          //this.adaptor.notifyItemChanged(getLayoutPosition());
+        }
+        if (checkBox != null) {
+          checkBox.setChecked(asset.selected);
+        }
+      }
+      else
+      {
+        rootLayout.setPadding(0, 0, 0, 0);
+      }
+    }
     public void toggleSelectionMode(boolean visible) {
       if (controlContainer != null && visible != this.isInSelectionMode) {
         controlContainer.setVisibility(visible ? View.VISIBLE : View.INVISIBLE);
@@ -386,6 +436,8 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
           headerLinkTextView.setVisibility(View.GONE);
         }
       }
+
+      toggleSelectedStatus(asset,false);
     }
 
     public void setData(Asset asset) throws IOException {

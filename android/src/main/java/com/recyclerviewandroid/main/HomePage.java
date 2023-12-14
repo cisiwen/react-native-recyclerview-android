@@ -114,7 +114,7 @@ public class HomePage {
         result.assets.add(oneMedia);
       }
     }
-    dataAdaptor = new GalleryListRecylerviewDataAdaptor(swipeRefreshLayout, result,headerStyle, httpHeaders, (ReactContext) context);
+    dataAdaptor = new GalleryListRecylerviewDataAdaptor(swipeRefreshLayout,recyclerView, result,headerStyle, httpHeaders, (ReactContext) context);
     recyclerView.setAdapter(dataAdaptor);
   }
 
@@ -159,7 +159,7 @@ public class HomePage {
         result.assets.add(oneMedia);
       }
     }
-    dataAdaptor = new GalleryListRecylerviewDataAdaptor(swipeRefreshLayout, result,props.headerStyle, props.httpHeaders, (ReactContext) context);
+    dataAdaptor = new GalleryListRecylerviewDataAdaptor(swipeRefreshLayout,recyclerView, result,props.headerStyle, props.httpHeaders, (ReactContext) context);
     recyclerView.setAdapter(dataAdaptor);
   }
 
@@ -176,7 +176,7 @@ public class HomePage {
       GalleryAlbumProvider.getPhotos(input, this.context, new GalleryAlbumProvider.GetPhotoCallback() {
         @Override
         public void onResult(GetPhotoOutput result) {
-          dataAdaptor = new GalleryListRecylerviewDataAdaptor(swipeRefreshLayout, result, headerStyle,httpHeaders, (ReactContext) context);
+          dataAdaptor = new GalleryListRecylerviewDataAdaptor(swipeRefreshLayout,recyclerView, result, headerStyle,httpHeaders, (ReactContext) context);
           recyclerView.setAdapter(dataAdaptor);
         }
       });

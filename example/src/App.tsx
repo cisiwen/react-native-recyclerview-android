@@ -99,48 +99,6 @@ export default function App() {
     }
     sections.push(section);
   }
-
-  const refreshNewData = () => {
-    let updateSections: SectionDataSource[] = [];
-    let section: SectionDataSource = {
-      sectionTitle: `Gallery section ${sections.length}`,
-      sectionId: sections.length.toString(),
-      data: [],
-    };
-    for (let i = 0; i < 50; i++) {
-      section.data.push({
-        contentId: `${i}`,
-        uri:'https://4.img-dpreview.com/files/p/TS1200x900~sample_galleries/1330372094/7004100121.jpg',
-        contentUri: null, //'https://live.staticflickr.com/3469/3700376791_c5833828b3_b.jpg',
-        width: now,
-        title: null,
-        mediaType: parseInt((Math.random() * 100).toString()) % i > 0 ? 'video' : 'photo',
-        height: now,
-      });
-    }
-    updateSections.push(section);
-    console.log('refreshNewData', sections.length);
-    Commands.updateDataSource(recyclerview, JSON.stringify(updateSections));
-  }
-
-  const onLongPressed = (e: PagerViewOnPageSelectedEvent) => {
-    console.log('onLongPressed', e.nativeEvent);
-  };
-
-  const onRNSelectionModeChanged = () => {
-    Commands.toggleSelectionMode(recyclerview, true);
-  };
-  const onItemPressed = (e: PagerViewOnPageSelectedEvent) => {
-    console.log('onItemPressed', e.nativeEvent);
-    onRNSelectionModeChanged();
-  };
-  const onItemSelectStateChanged = (e: PagerViewOnPageSelectedEvent) => {
-    console.log('onItemSelectStateChanged', e.nativeEvent);
-  };
-  console.log(now, new Date().getTime().toString());
-  now = new Date().getTime().toString();
-  const dataSourceString = JSON.stringify(sections);
-  console.log('json.stringfy', now, new Date().getTime().toString());
   const sectionHeaderStyle: SectionHeaderStyle = {
     BackgroudColor: '#000000',
     FontSize: 20,
@@ -167,6 +125,50 @@ export default function App() {
     }
     
   };
+  const refreshNewData = () => {
+    let updateSections: SectionDataSource[] = [];
+    let section: SectionDataSource = {
+      sectionTitle: `Gallery section ${sections.length}`,
+      sectionId: sections.length.toString(),
+      data: [],
+    };
+    for (let i = 0; i < 50; i++) {
+      section.data.push({
+        contentId: `${i}`,
+        uri:'https://4.img-dpreview.com/files/p/TS1200x900~sample_galleries/1330372094/7004100121.jpg',
+        contentUri: null, //'https://live.staticflickr.com/3469/3700376791_c5833828b3_b.jpg',
+        width: now,
+        title: null,
+        mediaType: parseInt((Math.random() * 100).toString()) % i > 0 ? 'video' : 'photo',
+        height: now,
+      });
+    }
+    updateSections.push(section);
+    console.log('refreshNewData', sections.length);
+    recyclerProps.data =updateSections;
+    Commands.updateDataSource(recyclerview, JSON.stringify(recyclerProps));
+  }
+
+  const onLongPressed = (e: PagerViewOnPageSelectedEvent) => {
+    console.log('onLongPressed', e.nativeEvent);
+  };
+
+  const onRNSelectionModeChanged = () => {
+    Commands.toggleSelectionMode(recyclerview, true);
+  };
+  const onItemPressed = (e: PagerViewOnPageSelectedEvent) => {
+    console.log('onItemPressed', e.nativeEvent);
+    onRNSelectionModeChanged();
+  };
+  const onItemSelectStateChanged = (e: PagerViewOnPageSelectedEvent) => {
+    console.log('onItemSelectStateChanged', e.nativeEvent);
+  };
+  console.log(now, new Date().getTime().toString());
+  now = new Date().getTime().toString();
+  const dataSourceString = JSON.stringify(sections);
+  console.log('json.stringfy', now, new Date().getTime().toString());
+
+
   let recyclerview: React.ElementRef<typeof RecyclerviewAndroidView> | null =
     null;
   return (

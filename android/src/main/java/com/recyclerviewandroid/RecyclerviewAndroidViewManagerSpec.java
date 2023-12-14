@@ -14,7 +14,7 @@ import com.facebook.react.uimanager.annotations.ReactProp;
 
 import java.util.List;
 
-public abstract class RecyclerviewAndroidViewManagerSpec<T extends View> extends ViewGroupManager {
+public abstract class RecyclerviewAndroidViewManagerSpec<T extends View> extends SimpleViewManager<SwipeRefreshLayout> {
 
   public abstract void setColor(T view, @Nullable String value);
 
