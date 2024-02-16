@@ -121,13 +121,14 @@ public class HomePage {
   public void setDataSourceMedia(ReactRecyclerProps props) {
     GetPhotoOutput result = new GetPhotoOutput();
     result.assets = new ArrayList<Asset>();
-    int id = 0;
+    long id = 0;
 
     if(props.topHeaderItem!=null) {
       Asset topHeader = new Asset();
       topHeader.type="TopHeader";
-      topHeader.group_id=new Long(-999);
+      topHeader.group_id=new Long(-9999);
       topHeader.image = new Image();
+      topHeader.image.imageId=id;
       topHeader.image.imageUri = Uri.parse(props.topHeaderItem.imageUri);
       topHeader.group_name = props.topHeaderItem.title;
       topHeader.topHeaderItem = props.topHeaderItem;
@@ -136,11 +137,13 @@ public class HomePage {
 
     for (ReactSectionDataSource temp : props.data) {
       id++;
-      if(temp.sectionTitle!=null && temp.sectionTitle.length()>0) {
+      if (temp.sectionTitle != null && temp.sectionTitle.length() > 0) {
         Asset header = new Asset();
         header.type = "Header";
         header.group_name = temp.sectionTitle;
-        header.group_id = new Long(id);
+        header.group_id = id;
+        header.image = new Image();
+        header.image.imageId = id;
         header.originalSection = new ReactSectionDataSource();
         header.originalSection.sectionId = temp.sectionId;
         header.originalSection.sectionTitle = temp.sectionTitle;
@@ -152,7 +155,7 @@ public class HomePage {
         Asset oneMedia = new Asset();
         oneMedia.type = "IMAGE";
         oneMedia.image = new Image();
-        oneMedia.image.imageId = new Long(id);
+        oneMedia.image.imageId = id;
         oneMedia.image.imageUri = Uri.parse(asset.uri);
         oneMedia.originalAsset = asset;
         //oneMedia.image.imageId= asset.contentId;

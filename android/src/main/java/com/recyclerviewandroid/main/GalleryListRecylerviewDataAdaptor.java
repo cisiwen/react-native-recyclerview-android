@@ -97,15 +97,13 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
   @Override
   public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     View v;
-    if(viewType == VIEWTYPE_TOPHEADER) {
+    if (viewType == VIEWTYPE_TOPHEADER) {
       v = LayoutInflater.from(parent.getContext())
         .inflate(R.layout.top_header_item, parent, false);
-    }
-    else if(viewType == VIEWTYPE_TOPHEADER_FULL) {
+    } else if (viewType == VIEWTYPE_TOPHEADER_FULL) {
       v = LayoutInflater.from(parent.getContext())
         .inflate(R.layout.top_header_item_full_image, parent, false);
-    }
-    else if (viewType == VIEWTYPE_HEADER) {
+    } else if (viewType == VIEWTYPE_HEADER) {
       v = LayoutInflater.from(parent.getContext())
         .inflate(R.layout.list_section_header, parent, false);
       this.setSectionHeaderStyle(v, this.headerStyle);
@@ -152,7 +150,7 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
   public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
     Log.println(Log.INFO, "onBindViewHolder", String.valueOf(position));
     try {
-      holder.setData(this.photos.assets.get(position));
+      holder.setData(this.photos.assets.get(position),position);
     } catch (IOException e) {
       //throw new RuntimeException(e);
       Log.println(Log.DEBUG, "Error", e.toString());
@@ -163,7 +161,8 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
   @Override
   public long getItemId(int position) {
     Asset asset = this.photos.assets.get(position);
-    return asset.type == "Header" || asset.type=="TopHeader" ? asset.group_id : asset.image.imageId;
+    return  asset.image.imageId;
+    //return asset.type == "Header" || asset.type=="TopHeader" ? asset.group_id : asset.image.imageId;
   }
 
   @Override
@@ -182,9 +181,17 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
     EventDispatcher.sendItemOnPress(this.reactContext, view.getId(), asset);
   }
 
-  public void onSingleItemSelectChanged(boolean selected, Asset asset) {
+  public void onSingleItemSelectChanged(boolean selected, Asset asset,int position) {
     asset.selected = selected;
     EventDispatcher.sendSingleItemSelectChanged(this.reactContext, view.getId(), asset);
+    Log.i("SingleItemSelectChanged","view changed for "+position);
+    //this.notifyItemChanged(position);
+    for(int i=0;i<this.visibleItems.size();i++){
+      if(this.visibleItems.get(i).myPosition==position) {
+          this.visibleItems.get(i).toggleSelectedStatus(asset,true);
+      }
+    }
+    //this.notifyItemChanged(position,asset);
   }
 
 
@@ -261,7 +268,7 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
     RelativeLayout list_item_wrapper;
     Asset asset = null;
 
-
+    int myPosition;
     public ViewHolder(@NonNull View itemView, Context context, GalleryListRecylerviewDataAdaptor adapter) {
       super(itemView);
       this.context = context;
@@ -310,8 +317,9 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
           @Override
           public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-            adaptor.onSingleItemSelectChanged(b, asset);
-            toggleSelectedStatus(asset,true);
+            asset.selected = b;
+            adaptor.onSingleItemSelectChanged(b, asset,myPosition);
+            //toggleSelectedStatus(asset,true);
           }
         });
       }
@@ -332,28 +340,26 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
       animator.start();
     }
 
-    public  void toggleSelectedStatus(Asset asset,boolean animated){
-      if(this.isInSelectionMode) {
+    public  void toggleSelectedStatus(Asset asset,boolean animated) {
+      if (this.isInSelectionMode) {
         if (list_item_wrapper != null) {
           //ViewGroup.MarginLayoutParams marginParams =(ViewGroup.MarginLayoutParams)imageView.getLayoutParams();
           int margin = asset.selected ? 40 : 0;
-          int startValue = asset.selected ? 0: 40;
+          int startValue = asset.selected ? 0 : 40;
           //marginParams.setMargins(margin,margin,margin,margin);
-          if(!animated) {
+          if (!animated) {
             list_item_wrapper.setPadding(margin, margin, margin, margin);
             list_item_wrapper.invalidate();
-          }
-          else {
+          } else {
             animatedPadding(list_item_wrapper, startValue, margin);
           }
+
           //this.adaptor.notifyItemChanged(getLayoutPosition());
         }
         if (checkBox != null) {
           checkBox.setChecked(asset.selected);
         }
-      }
-      else
-      {
+      } else {
         rootLayout.setPadding(0, 0, 0, 0);
       }
     }
@@ -440,7 +446,9 @@ public class GalleryListRecylerviewDataAdaptor extends RecyclerView.Adapter<Gall
       toggleSelectedStatus(asset,false);
     }
 
-    public void setData(Asset asset) throws IOException {
+    public void setData(Asset asset,int position) throws IOException {
+      Log.i("setdata","setdata"+position);
+      myPosition = position;
       new RunBackend().execute(new Runnable() {
         @Override
         public void run() {
