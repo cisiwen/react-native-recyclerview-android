@@ -33,7 +33,8 @@ public class MediaStoreDataFetcher implements DataFetcher<Bitmap>{
       this.context = context;
       this.uri= Uri.parse(uri);
       String[] parts = uri.split("/");
-      this.imageId= Long.getLong(parts[parts.length-1]);
+      String idPart = parts[parts.length-1];
+      this.imageId= Long.parseLong(idPart);
       this.callback = callback;
     }
     @Override
